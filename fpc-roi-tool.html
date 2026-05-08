@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faster Payments ROI Assessment Tool — U.S. Faster Payments Council</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#FFFFFF;color:#222222;-webkit-font-smoothing:antialiased}
+.page{max-width:880px;margin:0 auto;padding:28px 24px 60px}
+.fpc-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:24px;border-bottom:3px solid #00529B}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.hdr-mark{width:10px;height:40px;background:#00529B;border-radius:3px}
+.hdr-title{font-size:15px;font-weight:700;color:#00529B;letter-spacing:.01em}
+.hdr-sub{font-size:12px;color:#666666;margin-top:2px}
+.hdr-badge{font-size:11px;color:#FFFFFF;background:#046a38;padding:5px 12px;border-radius:4px;font-weight:600;letter-spacing:.02em}
+.mt{display:flex;border:1px solid #CCCCCC;border-radius:6px;margin-bottom:1.5rem;overflow:hidden}
+.mt input[type=radio]{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.mt input[type=radio]:checked+.mb{background:#E8F1F8;color:#00529B;font-weight:600}
+.mb{flex:1;padding:11px 16px;font-size:13px;font-weight:500;cursor:pointer;color:#666666;text-align:center;display:block;line-height:1.4;user-select:none}
+.mb:hover{background:#F5F7FA}
+.prog{display:flex;align-items:center;margin-bottom:2rem}
+.pbn{display:flex;align-items:center;gap:6px}
+.pbc{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border:1px solid #CCCCCC;color:#666666;flex-shrink:0}
+.pbc.a{background:#E8F1F8;color:#00529B;border-color:#00529B}
+.pbc.d{background:#EDF5EA;color:#046a38;border-color:#046a38}
+.pbl{font-size:12px;color:#999999}
+.pbl.a{color:#00529B;font-weight:600}
+.pbl.d{color:#046a38}
+.pbln{flex:1;height:1px;background:#E5E5E5;margin:0 8px}
+.step{display:none}.step.on{display:block}
+h3.sh{margin:0 0 6px;font-size:21px;font-weight:700;color:#00529B}
+p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
+.slbl{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#666666;margin:1.25rem 0 .5rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.oc{position:relative}
+.oc input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+.oc label{display:flex;gap:10px;padding:11px 14px;border:1px solid #E5E5E5;border-radius:6px;cursor:pointer;background:#FFFFFF}
+.oc label:hover{border-color:#CCCCCC;background:#F5F7FA}
+.oc input[type=radio]:checked+label{border-color:#00529B;background:#E8F1F8}
+.onn{font-size:14px;font-weight:500;display:block;color:#222222}
+.ons{font-size:12px;color:#666666;display:block;margin-top:2px}
+.oc input[type=radio]:checked+label .ons{color:#00529B}
+.ai-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ai-row label{font-size:14px;color:#666666;white-space:nowrap}
+.ai-inp{padding:8px 12px;border:1px solid #CCCCCC;border-radius:6px;font-size:14px;background:#FFFFFF;color:#222222;width:140px;font-family:inherit}
+.mix-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.mix-card{border:1px solid #E5E5E5;border-radius:6px;padding:12px 14px;background:#FFFFFF}
+.mix-lbl{font-size:12px;font-weight:500;color:#666666;margin-bottom:8px}
+.mix-card input[type=number]{width:70px;padding:6px 8px;border:1px solid #CCCCCC;border-radius:6px;font-size:14px;background:#FFFFFF;color:#222222;display:block;margin-bottom:5px;font-family:inherit}
+.mix-sub{font-size:11px;color:#999999}
+.tot-row{display:flex;align-items:center;gap:10px;font-size:12px;color:#666666;margin-bottom:4px}
+.rcl{display:flex;flex-direction:column;gap:8px}
+.rc{position:relative}
+.rc input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
+.rc label{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:1px solid #E5E5E5;border-radius:6px;cursor:pointer;background:#FFFFFF}
+.rc label:hover{border-color:#CCCCCC;background:#F5F7FA}
+.rc input[type=checkbox]:checked+label{border-color:#00529B;background:#E8F1F8}
+.rc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.rc-nm{font-size:14px;font-weight:500;color:#222222;display:block}
+.rc-ds{font-size:12px;color:#666666;display:block;margin-top:2px}
+.rc input[type=checkbox]:checked+label .rc-ds{color:#00529B}
+.ucw{border:1px solid #E5E5E5;border-radius:6px;margin-bottom:8px;background:#FFFFFF;overflow:hidden}
+.ucw.on{border-color:#00529B}
+.uch{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;cursor:pointer}
+.uch:hover{background:#F5F7FA}
+.ucw.on .uch{background:#E8F1F8}
+.ucn{font-size:14px;font-weight:500;color:#222222;display:block}
+.ucd{font-size:12px;color:#666666;display:block;margin-top:1px}
+.ucw.on .ucd{color:#00529B}
+.ucp{display:none;padding:14px 16px;border-top:1px solid #E5E5E5}
+.ucw.on .ucp{display:block}
+.fsect{margin-bottom:12px;padding:12px 14px;background:#F5F7FA;border-radius:6px;border:1px solid #E5E5E5}
+.fsect-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00529B;margin-bottom:10px}
+.frow{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.flbl{font-size:13px;color:#666666;min-width:92px}
+.fw{position:relative;width:105px}
+.fp{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#999999;pointer-events:none}
+.fi{width:100%;padding:6px 8px 6px 20px;border:1px solid #CCCCCC;border-radius:6px;font-size:13px;background:#FFFFFF;color:#222222;font-family:inherit}
+.fi:disabled{opacity:.4;background:#EAECEF;cursor:not-allowed}
+.frange{font-size:11px;color:#999999}
+.use-mid{font-size:11px;color:#00529B;background:#FFFFFF;border:1px solid #00529B;border-radius:4px;padding:3px 8px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.use-mid:hover:not(:disabled){background:#E8F1F8}
+.use-mid:disabled{opacity:.35;cursor:not-allowed;border-color:#CCCCCC;color:#999999}
+.free-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #CCCCCC}
+.free-row input[type=checkbox]{accent-color:#00529B;cursor:pointer;width:14px;height:14px;flex-shrink:0}
+.free-row label{font-size:12px;color:#666666;cursor:pointer;line-height:1.5}
+.nav-row{display:flex;gap:8px;margin-top:1.75rem;align-items:center}
+.btnn{padding:9px 22px;border-radius:6px;border:none;background:#00529B;color:#FFFFFF;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btnn:hover{background:#003d75}
+.btnb{padding:9px 16px;border-radius:6px;border:1px solid #CCCCCC;background:transparent;color:#666666;font-size:14px;cursor:pointer;font-family:inherit}
+.btnb:hover{background:#F5F7FA}
+.vm{font-size:12px;color:#C0392B;margin-left:auto;display:none}
+.mbdg{padding:16px 20px;border:1px solid #E5E5E5;border-radius:8px;margin-bottom:1.25rem;background:#FFFFFF}
+.mey{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#666666;margin-bottom:6px}
+.mnm{font-size:22px;font-weight:700;margin-bottom:6px}
+.mdc{font-size:13px;color:#666666;line-height:1.65;margin-bottom:12px}
+.mtrk{display:flex;gap:4px}
+.mseg{height:5px;flex:1;border-radius:3px;background:#E5E5E5}
+.mets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
+.met{background:#F5F7FA;border-radius:6px;padding:13px 14px 11px;border:1px solid #E5E5E5}
+.ml{font-size:11px;color:#666666;margin-bottom:5px;line-height:1.3}
+.mv{font-size:14px;font-weight:600;line-height:1.3;color:#222222}
+.ms{font-size:11px;color:#999999;margin-top:3px}
+.lgr{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#666666;margin-bottom:4px}
+.lg{display:flex;align-items:center;gap:5px}
+.lsq{width:10px;height:10px;border-radius:2px}
+.cnote{font-size:11px;color:#999999;margin-bottom:10px;font-style:italic}
+.vtbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:1.5rem;table-layout:fixed}
+.vtbl th{text-align:left;font-weight:600;padding:8px;border-bottom:2px solid #CCCCCC;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:.04em;background:#F5F7FA}
+.vtbl td{padding:7px 8px;border-bottom:1px solid #E5E5E5;color:#222222;font-size:12px}
+.vtbl .trow td{border-top:2px solid #00529B;border-bottom:none;font-weight:700;background:#F5F7FA;color:#00529B}
+.vtbl td:not(:first-child){text-align:right}
+.cdot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:2px}
+.aln-panel{padding:16px 20px;border:1px solid #E5E5E5;border-radius:8px;margin-bottom:1.25rem;background:#FFFFFF}
+.aln-title{font-size:14px;font-weight:600;margin-bottom:12px;color:#222222}
+.aln-item{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.65;color:#666666;align-items:flex-start}
+.aln-item:last-child{margin-bottom:0}
+.aln-pct{font-size:20px;font-weight:700;color:#00529B;min-width:46px;flex-shrink:0;line-height:1}
+.rp{padding:16px 20px;border:1px solid #E5E5E5;border-radius:8px;margin-bottom:1.25rem;background:#FFFFFF}
+.rpt{font-size:14px;font-weight:600;margin-bottom:12px;color:#222222}
+.rec{display:flex;gap:10px;margin-bottom:12px;font-size:13px;line-height:1.65;color:#666666}
+.rec:last-child{margin-bottom:0}
+.recn{min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.recn.strat{background:#E8F1F8;color:#00529B}
+.recn.opp{background:#FFF3CD;color:#856404}
+.rec-opp-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:#FFF3CD;color:#856404;margin-right:6px;vertical-align:1px}
+.mdet{margin-bottom:1.25rem;border:1px solid #E5E5E5;border-radius:6px;background:#FFFFFF}
+.mdet summary{padding:12px 16px;cursor:pointer;font-size:13px;font-weight:500;color:#222222;list-style:none;display:flex;align-items:center;gap:6px}
+.mdet summary::-webkit-details-marker{display:none}
+.mtbl{width:100%;border-collapse:collapse;font-size:12px}
+.mtbl th{text-align:left;padding:8px 12px;font-weight:600;border-bottom:1px solid #CCCCCC;color:#666666;font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:#F5F7FA}
+.mtbl td{padding:8px 12px;border-bottom:1px solid #E5E5E5;vertical-align:top;line-height:1.6;color:#666666;font-size:12px}
+.mtbl tr:last-child td{border-bottom:none}
+.disc{font-size:11px;color:#999999;line-height:1.6;margin-bottom:1.25rem;padding:10px 14px;border:1px solid #E5E5E5;border-radius:6px;background:#F5F7FA}
+.ftr{display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid #E5E5E5}
+.ftrc{font-size:12px;color:#999999}
+.btnrs{font-size:12px;background:none;border:1px solid #CCCCCC;padding:6px 12px;border-radius:6px;cursor:pointer;color:#666666;font-family:inherit}
+.btnrs:hover{background:#F5F7FA}
+.sn{font-size:12px;color:#999999;margin-top:10px;line-height:1.6}
+.note-box{background:#E8F1F8;border:1px solid #b8d4ee;border-radius:6px;padding:10px 14px;font-size:12px;color:#00529B;margin-bottom:1rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="fpc-hdr">
+  <div class="hdr-left">
+    <div class="hdr-mark"></div>
+    <div>
+      <div class="hdr-title">U.S. Faster Payments Council</div>
+      <div class="hdr-sub">Faster Payments ROI Assessment Tool</div>
+    </div>
+  </div>
+  <div class="hdr-badge">BETA &mdash; For Reviewer Feedback</div>
+</div>
+<div class="mt">
+  <input type="radio" name="modeR" id="mEst" value="estimator" checked>
+  <label for="mEst" class="mb">ROI Estimator</label>
+  <input type="radio" name="modeR" id="mAss" value="assessment">
+  <label for="mAss" class="mb">Implementation Assessment</label>
+</div>
+<div class="prog" id="pg"></div>
+<h3 class="sh" id="stt"></h3>
+<p class="ss" id="sts"></p>
+<div class="step on" id="step1">
+  <p class="slbl">Institution type</p>
+  <div class="g2">
+    <div class="oc"><input type="radio" name="ft" id="ft1" value="bank"><label for="ft1"><span class="onn">Commercial Bank</span><span class="ons">State or nationally chartered</span></label></div>
+    <div class="oc"><input type="radio" name="ft" id="ft2" value="cu"><label for="ft2"><span class="onn">Credit Union</span><span class="ons">Member-owned cooperative</span></label></div>
+    <div class="oc"><input type="radio" name="ft" id="ft3" value="thrift"><label for="ft3"><span class="onn">Savings Bank / Thrift</span><span class="ons">Savings-focused institution</span></label></div>
+    <div class="oc"><input type="radio" name="ft" id="ft4" value="other"><label for="ft4"><span class="onn">Other Institution</span><span class="ons">CDFI, industrial bank, etc.</span></label></div>
+  </div>
+  <p class="slbl">Total assets</p>
+  <div class="ai-row">
+    <label for="aIn">Total assets:</label>
+    <input class="ai-inp" type="number" id="aIn" min="0.01" step="0.01" placeholder="e.g. 0.5">
+    <span style="font-size:13px;color:#666666">billion USD</span>
+  </div>
+  <p class="sn" style="margin-bottom:1rem">Enter in billions &mdash; e.g., 0.5 for a $500M institution, 2.5 for $2.5B. Volume estimates scale with asset size using Federal Reserve 2022 Payments Study data.</p>
+  <p class="slbl">Customer mix</p>
+  <div class="mix-row">
+    <div class="mix-card"><div class="mix-lbl">Consumers</div><input type="number" id="pCons" min="0" max="100" step="1" value="60"><div class="mix-sub">% of accounts</div></div>
+    <div class="mix-card"><div class="mix-lbl">Small &amp; Mid-Size Businesses</div><input type="number" id="pSmb" min="0" max="100" step="1" value="30"><div class="mix-sub">% of accounts</div></div>
+    <div class="mix-card"><div class="mix-lbl">Large Corporates</div><input type="number" id="pCorp" min="0" max="100" step="1" value="10"><div class="mix-sub">% of accounts</div></div>
+  </div>
+  <div class="tot-row">
+    <span>Total:</span>
+    <span id="mixTot" style="font-size:12px;font-weight:600">100%</span>
+    <span id="mixWarn" style="font-size:12px;color:#C0392B;display:none">&mdash; must equal 100% to continue</span>
+  </div>
+  <p class="sn">Customer mix adjusts addressable transaction volume for each use case and surfaces opportunity flags where your mix suggests a high-value use case not yet in your model. Industry benchmarks: community banks ~70% consumer / 28% SMB / 2% corporate; mid-size ~55% / 35% / 10%; regional ~45% / 40% / 15% (FDIC 2023).</p>
+</div>
+<div class="step" id="step2">
+  <div class="rcl" id="railList"></div>
+  <p class="sn" id="s2note"></p>
+</div>
+<div class="step" id="step3">
+  <div class="note-box">Fee ranges below reflect observed market rates at U.S. financial institutions and are provided for reference only. Sources: FPC member surveys; AFP Electronic Payments Survey; Nacha industry pricing data. FPC does not recommend or endorse any specific pricing. Use the <strong>Use midpoint</strong> button to populate the midpoint of the market range as a starting estimate.</div>
+  <div id="ucCont"></div>
+  <p class="sn">Select each use case to include and enter your planned fee per transaction. Checking &ldquo;Offer at no charge&rdquo; models the use case as a strategic capability &mdash; indirect value components are still projected.</p>
+</div>
+<div class="step" id="step4">
+  <div id="matB"></div>
+  <div id="mGrid" class="mets"></div>
+  <div id="lgRow" class="lgr"></div>
+  <p class="cnote">Chart shows estimate range midpoints. All figures represent a &plusmn;10% estimated range &mdash; see breakdown table below.</p>
+  <div style="position:relative;height:270px;margin-bottom:1.5rem"><canvas id="roi" role="img" aria-label="Stacked bar chart showing projected annual value by component for Year 1, Year 2, and Year 3"></canvas></div>
+  <table id="vtbl" class="vtbl"></table>
+  <div id="alnPanel"></div>
+  <div class="rp"><div class="rpt">&#128161; Recommendations for your institution</div><div id="recs"></div></div>
+  <details class="mdet"><summary>&#8505;&nbsp; Methodology &amp; data sources</summary><div style="padding:0 16px 12px"><table id="mtbl" class="mtbl"></table></div></details>
+  <div class="disc">Projections are estimates based on publicly available industry data and the inputs provided. Fee revenue figures represent gross customer-facing revenue and do not deduct network operator fees (industry average approximately $0.04&ndash;$0.50 per transaction depending on rail and use case). All projected figures represent a &plusmn;10% estimated range around the model midpoint. Actual results depend on your institution&rsquo;s specific pricing strategy, use case execution, customer mix, technology partnerships, and operational factors. This tool is for strategic planning purposes only and does not constitute financial or investment advice. Provided by the U.S. Faster Payments Council.</div>
+  <div class="ftr"><span class="ftrc">U.S. Faster Payments Council &middot; fasterpaymentscouncil.org</span><button type="button" id="btnRs" class="btnrs">&#8635; Start over</button></div>
+</div>
+<div class="nav-row">
+  <button type="button" class="btnb" id="btnB" style="display:none">&#8592; Back</button>
+  <button type="button" class="btnn" id="btnN">Next &#8594;</button>
+  <span class="vm" id="vm"></span>
+</div>
+</div>
+<script>
+var UC_DATA=[
+  {id:'p2p',nm:'P2P Transfers',ds:'Consumer person-to-person',base:3500,aff:{c:1.0,s:0.15,g:0.0},sendRange:'$0.25&ndash;$1.50',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.50&ndash;$1.50',pullRange:'$0.25&ndash;$1.00',sendLo:.25,sendHi:1.50,recvLo:0,recvHi:.25,pushLo:.50,pushHi:1.50,pullLo:.25,pullHi:1.00,fsrc:'AFP 2024 Payments Fraud and Control Survey; Nacha industry volume data'},
+  {id:'payroll',nm:'Payroll / Earned Wage Access',ds:'Payroll disbursements & EWA',base:2000,aff:{c:0.5,s:1.0,g:0.6},sendRange:'$0.25&ndash;$1.00',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.25&ndash;$1.00',pullRange:'$0.25&ndash;$0.75',sendLo:.25,sendHi:1.00,recvLo:0,recvHi:.25,pushLo:.25,pushHi:1.00,pullLo:.25,pullHi:.75,fsrc:'Nacha payroll ACH benchmarks; EWA platform industry research'},
+  {id:'insurance',nm:'Insurance Payouts',ds:'Claims & loss settlements',base:500,aff:{c:0.8,s:0.4,g:0.5},sendRange:'$0.50&ndash;$3.00',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.50&ndash;$2.50',pullRange:'$0.25&ndash;$1.50',sendLo:.50,sendHi:3.00,recvLo:0,recvHi:.50,pushLo:.50,pushHi:2.50,pullLo:.25,pullHi:1.50,fsrc:'Insurance industry payment benchmarks; Mercator Advisory Group'},
+  {id:'gig',nm:'Gig Economy Payouts',ds:'Platform & marketplace disbursements',base:1500,aff:{c:0.9,s:0.5,g:0.1},sendRange:'$0.50&ndash;$2.50',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.50&ndash;$2.00',pullRange:'$0.25&ndash;$1.00',sendLo:.50,sendHi:2.50,recvLo:0,recvHi:.50,pushLo:.50,pushHi:2.00,pullLo:.25,pullHi:1.00,fsrc:'Platform economy research; Mercator Advisory Group'},
+  {id:'b2b',nm:'B2B / Commercial Payments',ds:'Supply chain & treasury payments',base:8000,aff:{c:0.0,s:1.0,g:1.0},sendRange:'$1.00&ndash;$5.00',recvRange:'$0.00&ndash;$1.00',pushRange:'$0.75&ndash;$3.00',pullRange:'$0.50&ndash;$2.50',sendLo:1.00,sendHi:5.00,recvLo:0,recvHi:1.00,pushLo:.75,pushHi:3.00,pullLo:.50,pullHi:2.50,fsrc:'AFP Electronic Payments Survey; Nacha commercial ACH data'},
+  {id:'billpay',nm:'Bill Pay / Request for Payment',ds:'RFP & bill pay modernization',base:4000,aff:{c:0.8,s:0.7,g:0.3},sendRange:'$0.25&ndash;$1.50',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.25&ndash;$1.25',pullRange:'$0.25&ndash;$1.00',sendLo:.25,sendHi:1.50,recvLo:0,recvHi:.50,pushLo:.25,pushHi:1.25,pullLo:.25,pullHi:1.00,fsrc:'Federal Reserve 2022 Payments Study; Nacha RFP pilot data'},
+  {id:'realestate',nm:'Real Estate / Escrow Closings',ds:'Title transfers & closing disbursements',base:150,aff:{c:0.6,s:0.5,g:0.3},sendRange:'$5.00&ndash;$30.00',recvRange:'$0.00&ndash;$2.00',pushRange:'$3.00&ndash;$20.00',pullRange:'$2.00&ndash;$15.00',sendLo:5,sendHi:30,recvLo:0,recvHi:2,pushLo:3,pushHi:20,pullLo:2,pullHi:15,fsrc:'ALTA title industry data; industry closing cost benchmarks'},
+  {id:'gaming',nm:'Gaming / Marketplace Payouts',ds:'Winnings & platform payouts',base:1000,aff:{c:1.0,s:0.2,g:0.0},sendRange:'$0.50&ndash;$2.00',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.50&ndash;$2.00',pullRange:'$0.25&ndash;$1.00',sendLo:.50,sendHi:2.00,recvLo:0,recvHi:.25,pushLo:.50,pushHi:2.00,pullLo:.25,pullHi:1.00,fsrc:'Gaming and marketplace platform payment benchmarks'}
+];
+var MAT=[
+  {nm:'Explorer',clr:'#888780',dc:"No faster payment rails currently deployed. You're well-positioned to begin — early adopters are building competitive advantages in customer acquisition, retention, and new fee income streams that compound over time."},
+  {nm:'Receiver',clr:'#046a38',dc:"Receive capability is live. Your customers can receive real-time credits from any participating institution. Activating send capability is a natural next step that unlocks direct fee income across a wide range of consumer and business use cases."},
+  {nm:'Sender',clr:'#00529B',dc:"Full send and receive is active on at least one instant rail. Your institution can originate real-time payments across consumer and business use cases, generating direct fee income alongside check displacement and retention benefits."},
+  {nm:'Practitioner',clr:'#709945',dc:"Both instant payments and card-based money movement capabilities are active. Your institution is generating measurable faster payments revenue across multiple rails and customer segments."},
+  {nm:'Leader',clr:'#046a38',dc:"A multi-rail faster payments strategy is fully deployed with multiple active use cases. Your institution is generating optimized revenue across consumer, SMB, and corporate segments and is well-positioned as a competitive benchmark."}
+];
+var NEUTRAL={c:.60,s:.30,g:.10},RAMP=[.05,.18,.35];
+var CLR={fee:'#00529B',disp:'#046a38',ret:'#709945',fraud:'#4A9BDE'};
+var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10},railSel=new Set(),chartInst=null;
+var UCS={};
+function resetUCS(){UC_DATA.forEach(function(u){UCS[u.id]={sel:false,freeInstant:false,freeCard:false,sendFee:null,recvFee:null,pushFee:null,pullFee:null};});}
+resetUCS();
+function setMode(m){
+  mode=m;
+  document.getElementById('mEst').checked=(m==='estimator');
+  document.getElementById('mAss').checked=(m==='assessment');
+  var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');
+  S={step:1,assets:'',cons:60,smb:30,corp:10};railSel.clear();resetUCS();
+  document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
+  var aIn=document.getElementById('aIn');if(aIn)aIn.value='';
+  document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
+  mixChg();renderRailList();if(chartInst){chartInst.destroy();chartInst=null;}
+  document.getElementById('step1').classList.add('on');rprog();rhdr();rnav();hvm();
+}
+function renderRailList(){
+  var e=mode==='estimator';
+  var opts=[
+    {v:'none',dot:'#CCCCCC',nm:e?'No faster payments capabilities':'Not yet live on any faster payments rail',ds:e?'Start from baseline to compare the opportunity value of adding faster payments capabilities':'Building the business case or in early evaluation'},
+    {v:'receive',dot:'#046a38',nm:'Instant Payments — Receive Only',ds:e?'Model receive-only capability on FedNow and/or RTP':'Live on FedNow and/or RTP; customers can receive real-time credits from any participating institution'},
+    {v:'send',dot:'#00529B',nm:'Instant Payments — Send and Receive',ds:e?'Model full instant payment origination on FedNow and/or RTP — send and receive across consumer and business use cases':'Full origination capability live on FedNow and/or RTP; your institution can send and receive real-time payments'},
+    {v:'card',dot:'#86bc25',nm:'Card-Based Money Movement',ds:e?'Model push and pull card-based capability via Visa Direct and/or Mastercard Send':'Live on Visa Direct and/or Mastercard Send; enables instant push disbursements and pull transactions via card'}
+  ];
+  var rl=document.getElementById('railList');if(!rl)return;
+  rl.innerHTML=opts.map(function(o){return '<div class="rc"><input type="checkbox" id="rs-'+o.v+'" value="'+o.v+'"><label for="rs-'+o.v+'"><div class="rc-dot" style="background:'+o.dot+'"></div><div><span class="rc-nm">'+o.nm+'</span><span class="rc-ds">'+o.ds+'</span></div></label></div>';}).join('');
+  rl.querySelectorAll('input[type=checkbox]').forEach(function(inp){inp.addEventListener('change',function(){hRail(inp);});});
+  var sn=document.getElementById('s2note');
+  if(sn)sn.textContent=e?'Select the capabilities to include in this scenario. Mix and match to explore different implementation paths and compare projected outcomes.':'Select all that apply. Your selections set your baseline maturity stage — which drives the recommendations on the results page.';
+}
+function rprog(){
+  var L=['Profile','Capabilities','Use Cases','Results'],el=document.getElementById('pg');if(!el)return;
+  el.innerHTML=L.map(function(l,i){var n=i+1,a=n===S.step,d=n<S.step;return '<div class="pbn"><div class="pbc '+(d?'d':a?'a':'')+'">'+( d?'&#10003;':n)+'</div><span class="pbl '+(d?'d':a?'a':'')+'">'+(l)+'</span></div>'+(i<3?'<div class="pbln"></div>':'');}).join('');
+}
+function rhdr(){
+  var e=mode==='estimator';
+  var STPS=[
+    {t:"Your institution's profile",s:"Enter your institution type, total assets, and customer mix. These drive the transaction volume estimates and use case recommendations."},
+    e?{t:"Which capabilities would you like to model?",s:"Select the faster payments capabilities to include in this scenario. Mix and match to explore different implementation paths and compare projected outcomes."}:{t:"Your current faster payments status",s:"Select all faster payments capabilities currently live at your institution. These determine your baseline maturity stage and shape the recommendations on the results page."},
+    {t:"Use cases and planned pricing",s:"Select the use cases your institution plans to support and enter your planned fee per transaction. All four value components are modeled regardless of whether a fee is charged."},
+    e?{t:"Your faster payments ROI estimate",s:"Projected three-year value for this scenario — combining fee revenue, check displacement savings, deposit retention, and fraud cost reduction. All figures represent a \u00b110% estimated range."}:{t:"Your faster payments ROI outlook",s:"Three-year projected value for your institution, adjusted for your customer mix and current program status. All figures represent a \u00b110% estimated range."}
+  ];
+  var s=STPS[S.step-1];document.getElementById('stt').textContent=s.t;document.getElementById('sts').textContent=s.s;
+}
+function rnav(){
+  var bB=document.getElementById('btnB'),bN=document.getElementById('btnN');
+  if(bB)bB.style.display=S.step===1?'none':'inline-flex';
+  if(bN){bN.style.display=S.step===4?'none':'inline-flex';if(S.step<4)bN.textContent=S.step===3?'See my results \u2192':'Next \u2192';}
+}
+function svm(m){var e=document.getElementById('vm');if(e){e.textContent=m;e.style.display='block';}}
+function hvm(){var e=document.getElementById('vm');if(e)e.style.display='none';}
+function mixChg(){
+  S.cons=parseInt(document.getElementById('pCons').value)||0;S.smb=parseInt(document.getElementById('pSmb').value)||0;S.corp=parseInt(document.getElementById('pCorp').value)||0;
+  var tot=S.cons+S.smb+S.corp,el=document.getElementById('mixTot'),w=document.getElementById('mixWarn');
+  if(el){el.textContent=tot+'%';el.style.color=tot===100?'#046a38':'#C0392B';}
+  if(w)w.style.display=tot!==100?'inline':'none';
+}
+function hRail(inp){
+  if(inp.value==='none'){if(inp.checked){document.querySelectorAll('#railList input[type=checkbox]').forEach(function(c){if(c!==inp)c.checked=false;});railSel.clear();railSel.add('none');}else railSel.delete('none');}
+  else{if(inp.checked){var ni=document.getElementById('rs-none');if(ni)ni.checked=false;railSel.delete('none');railSel.add(inp.value);}else railSel.delete(inp.value);}
+}
+function validate(){
+  if(S.step===1){if(!(parseFloat(S.assets)>0)){svm('Please enter your institution\'s total assets to continue.');return false;}if(S.cons+S.smb+S.corp!==100){svm('Customer mix must total 100% to continue.');return false;}}
+  if(S.step===3&&!Object.values(UCS).some(function(u){return u.sel;})){svm('Select at least one use case to model.');return false;}
+  hvm();return true;
+}
+function goNext(){if(!validate())return;switchStep(S.step+1);}
+function goBack(){switchStep(S.step-1);}
+function switchStep(n){
+  var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');S.step=n;
+  var nxt=document.getElementById('step'+S.step);if(nxt)nxt.classList.add('on');
+  rprog();rhdr();rnav();hvm();if(S.step===3)renderUC();if(S.step===4)renderResults();
+}
+function adjFactor(ucId){
+  var uc=UC_DATA.find(function(u){return u.id===ucId;}),a=uc.aff,c=S.cons/100,s=S.smb/100,g=S.corp/100;
+  var score=c*a.c+s*a.s+g*a.g,neutral=NEUTRAL.c*a.c+NEUTRAL.s*a.s+NEUTRAL.g*a.g;
+  return uc.base*(neutral>0?score/neutral:score);
+}
+function midVal(lo,hi){return((lo+hi)/2).toFixed(2);}
+function feeInputRow(label,field,rangeStr,mVal,ucId,val,disabled){
+  var iv=val!==null?'value="'+val.toFixed(2)+'"':'';
+  return '<div class="frow"><span class="flbl">'+label+':</span><div class="fw"><span class="fp">$</span><input class="fi" type="number" id="fi-'+ucId+'-'+field+'" min="0" step="0.01" '+iv+(disabled?' disabled':'')+' data-uc="'+ucId+'" data-field="'+field+'"></div><span class="frange">Range: '+rangeStr+'</span><button type="button" class="use-mid" data-uc="'+ucId+'" data-field="'+field+'" data-mid="'+mVal+'"'+(disabled?' disabled':'')+'>Use midpoint ($'+mVal+')</button></div>';
+}
+function renderUC(){
+  var ab=parseFloat(S.assets)||0,hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecv=railSel.has('receive')||hasSend;
+  var c=document.getElementById('ucCont');if(!c)return;c.innerHTML='';
+  UC_DATA.forEach(function(uc){
+    var st=UCS[uc.id],mv=Math.round(ab*adjFactor(uc.id)),feeHtml='';
+    if(hasRecv){
+      feeHtml+='<div class="fsect"><div class="fsect-lbl">Instant Payments &mdash; FedNow / RTP</div>';
+      if(hasSend)feeHtml+=feeInputRow('Send fee','sendFee',uc.sendRange,midVal(uc.sendLo,uc.sendHi),uc.id,st.sendFee,st.freeInstant);
+      feeHtml+=feeInputRow('Receive fee','recvFee',uc.recvRange,midVal(uc.recvLo,uc.recvHi),uc.id,st.recvFee,st.freeInstant);
+      feeHtml+='<div class="free-row"><input type="checkbox" id="fri-'+uc.id+'" '+(st.freeInstant?'checked':'')+' data-uc="'+uc.id+'" data-freetype="instant"><label for="fri-'+uc.id+'">Offer at no charge &mdash; rely on indirect benefits only</label></div></div>';
+    }
+    if(hasCard){
+      feeHtml+='<div class="fsect"><div class="fsect-lbl">Card-Based Money Movement &mdash; Visa Direct / Mastercard Send</div>';
+      feeHtml+=feeInputRow('Push fee','pushFee',uc.pushRange,midVal(uc.pushLo,uc.pushHi),uc.id,st.pushFee,st.freeCard);
+      feeHtml+=feeInputRow('Pull fee','pullFee',uc.pullRange,midVal(uc.pullLo,uc.pullHi),uc.id,st.pullFee,st.freeCard);
+      feeHtml+='<div class="free-row"><input type="checkbox" id="frc-'+uc.id+'" '+(st.freeCard?'checked':'')+' data-uc="'+uc.id+'" data-freetype="card"><label for="frc-'+uc.id+'">Offer at no charge &mdash; rely on indirect benefits only</label></div></div>';
+    }
+    var d=document.createElement('div');d.className='ucw'+(st.sel?' on':'');d.id='ucw-'+uc.id;
+    d.innerHTML='<label class="uch" for="ucb-'+uc.id+'"><input type="checkbox" id="ucb-'+uc.id+'" '+(st.sel?'checked':'')+' data-uc="'+uc.id+'" data-sel="1" style="accent-color:#00529B;cursor:pointer;flex-shrink:0;margin-top:2px"><div><span class="ucn">'+uc.nm+'</span><span class="ucd">'+uc.ds+'</span></div></label><div class="ucp"><p style="font-size:12px;color:#666666;margin-bottom:12px"><strong>Estimated monthly transactions:</strong> '+mv.toLocaleString()+' <span style="font-weight:400;color:#999999">(based on $'+parseFloat(S.assets).toFixed(parseFloat(S.assets)<1?2:1)+'B assets &middot; '+S.cons+'% consumer / '+S.smb+'% SMB / '+S.corp+'% corporate &middot; Source: Federal Reserve 2022 Payments Study; '+uc.fsrc+')</span></p>'+feeHtml+'</div>';
+    c.appendChild(d);
+  });
+  c.querySelectorAll('input[data-sel]').forEach(function(inp){inp.addEventListener('change',function(){var id=inp.getAttribute('data-uc');UCS[id].sel=inp.checked;var w=document.getElementById('ucw-'+id);if(w)w.classList.toggle('on',inp.checked);});});
+  c.querySelectorAll('input[data-freetype]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var id=inp.getAttribute('data-uc'),ft=inp.getAttribute('data-freetype');
+      var fields=ft==='instant'?['sendFee','recvFee']:['pushFee','pullFee'];
+      UCS[id][ft==='instant'?'freeInstant':'freeCard']=inp.checked;
+      fields.forEach(function(f){var fi=document.getElementById('fi-'+id+'-'+f),mb=fi?fi.closest('.frow').querySelector('.use-mid'):null;if(fi){fi.disabled=inp.checked;if(inp.checked){fi.value='';UCS[id][f]=null;}}if(mb)mb.disabled=inp.checked;});
+    });
+  });
+  c.querySelectorAll('input.fi').forEach(function(inp){inp.addEventListener('input',function(){var id=inp.getAttribute('data-uc'),field=inp.getAttribute('data-field');UCS[id][field]=inp.value===''?null:Math.max(0,parseFloat(inp.value)||0);});});
+  c.querySelectorAll('button.use-mid').forEach(function(btn){btn.addEventListener('click',function(){var id=btn.getAttribute('data-uc'),field=btn.getAttribute('data-field'),mV=parseFloat(btn.getAttribute('data-mid')),inp=document.getElementById('fi-'+id+'-'+field);if(inp&&!inp.disabled){inp.value=mV.toFixed(2);UCS[id][field]=mV;}});});
+}
+function calcUCFeeBlended(ucId){
+  var st=UCS[ucId],hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecvOnly=railSel.has('receive')&&!hasSend,hasInstant=hasSend||hasRecvOnly;
+  var iVf=hasInstant?(hasCard?.5:1.0):0,cVf=hasCard?(hasInstant?.5:1.0):0,iF=0,cF=0;
+  if(!st.freeInstant&&hasInstant){if(hasRecvOnly)iF=st.recvFee||0;else if(hasSend)iF=(st.sendFee||0)*.5+(st.recvFee||0)*.5;}
+  if(!st.freeCard&&hasCard)cF=(st.pushFee||0)*.7+(st.pullFee||0)*.3;
+  return iVf*iF+cVf*cF;
+}
+function calcUCVal(ucId){var ab=parseFloat(S.assets)||0,mVol=ab*adjFactor(ucId),bf=calcUCFeeBlended(ucId);return RAMP.map(function(r){var ann=mVol*r*12;return{ann:ann,fv:ann*bf,dv:ann*.10*10};});}
+function calcROI(){
+  var ab=parseFloat(S.assets)||0,feeY=[0,0,0],dispY=[0,0,0],txY=[0,0,0],ucFeeY3={};
+  UC_DATA.forEach(function(uc){if(!UCS[uc.id].sel)return;var yrs=calcUCVal(uc.id);ucFeeY3[uc.id]=yrs[2].fv;yrs.forEach(function(y,i){feeY[i]+=y.fv;dispY[i]+=y.dv;txY[i]+=y.ann;});});
+  var cust=Math.min(Math.round(ab*70000),50000000);
+  var retY=RAMP.map(function(r){return Math.round(cust*(r/.35)*.005*200);});
+  var fraudY=txY.map(function(tx){return Math.round(tx*.10*.0049*2000);});
+  var totY=[0,1,2].map(function(i){return Math.round(feeY[i])+Math.round(dispY[i])+retY[i]+fraudY[i];});
+  return{feeY:feeY.map(Math.round),dispY:dispY.map(Math.round),retY:retY,fraudY:fraudY,totY:totY,t3:totY.reduce(function(a,b){return a+b;},0),cust:cust,ucFeeY3:ucFeeY3};
+}
+function fmtD(v){var av=Math.abs(v);if(av>=1000000)r
