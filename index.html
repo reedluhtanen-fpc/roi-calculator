@@ -405,8 +405,8 @@ function renderUC(){
       var mv=Math.round(ab*adjFactor(uc.id));
       var d=document.createElement('div');d.className='ucw locked on';d.id='ucw-'+uc.id;
       d.innerHTML='<label class="uch" for="ucb-'+uc.id+'"><input type="checkbox" id="ucb-'+uc.id+'" checked disabled style="accent-color:#86bc25;cursor:not-allowed;flex-shrink:0;margin-top:2px"><div><span class="ucn">'+uc.nm+'</span><span class="ucd">'+uc.ds+'</span></div></label>'
-        +'<div class="ucp"><p style="font-size:12px;color:#666666;margin-bottom:8px"><strong>Estimated monthly transactions:</strong> '+mv.toLocaleString()+' <span style="font-weight:400;color:#999999">(based on $'+parseFloat(S.assets).toFixed(parseFloat(S.assets)<1?2:1)+'B assets &middot; '+S.cons+'% consumer / '+S.smb+'% SMB / '+S.corp+'% corporate &middot; Source: Federal Reserve 2022 Payments Study; '+uc.fsrc+')</span></p>'
-        +'<div class="fsect"><div class="fsect-lbl">Instant Payments &mdash; FedNow / RTP</div>'
+        +'<div class="ucp"><p style="font-size:12px;color:#666666;margin-bottom:8px"><strong>Estimated monthly transactions:</strong> '+mv.toLocaleString()+' <span style="font-weight:400;color:#999999">(based on $'+parseFloat(S.assets).toFixed(parseFloat(S.assets)<1?2:1)+'B assets \u00b7 '+S.cons+'% consumer / '+S.smb+'% SMB / '+S.corp+'% corporate \u00b7 Source: Federal Reserve 2022 Payments Study; '+uc.fsrc+')</span></p>'
+        +'<div class="fsect"><div class="fsect-lbl">Instant Payments \u2014 FedNow / RTP</div>'
         +'<div class="frow"><span class="flbl">Receive fee:</span><div class="fw"><span class="fp">$</span><input class="fi" type="number" value="0.00" disabled></div><span class="frange">Institutions typically do not charge recipients for receiving payments</span></div>'
         +'<div class="free-row"><input type="checkbox" checked disabled><label style="cursor:default">Offered at no charge \u2014 indirect value (check displacement, retention, fraud reduction) is still projected</label></div>'
         +'</div></div>';
@@ -419,20 +419,20 @@ function renderUC(){
   UC_DATA.forEach(function(uc){
     var st=UCS[uc.id],mv=Math.round(ab*adjFactor(uc.id)),feeHtml='';
     if(hasRecv){
-      feeHtml+='<div class="fsect"><div class="fsect-lbl">Instant Payments &mdash; FedNow / RTP</div>';
+      feeHtml+='<div class="fsect"><div class="fsect-lbl">Instant Payments \u2014 FedNow / RTP</div>';
       if(hasSend)feeHtml+=feeInputRow('Send fee','sendFee',uc.sendRange,midStr(uc.sendLo,uc.sendHi),uc.id,st.sendFee,st.freeInstant);
       feeHtml+=feeInputRow('Receive fee','recvFee',uc.recvRange,midStr(uc.recvLo,uc.recvHi),uc.id,st.recvFee,st.freeInstant);
       feeHtml+='<div class="free-row"><input type="checkbox" id="fri-'+uc.id+'" '+(st.freeInstant?'checked':'')+' data-uc="'+uc.id+'" data-freetype="instant"><label for="fri-'+uc.id+'">Offer at no charge \u2014 rely on indirect benefits only</label></div></div>';
     }
     if(hasCard){
-      feeHtml+='<div class="fsect"><div class="fsect-lbl">Card-Based Money Movement &mdash; Visa Direct / Mastercard Send</div>';
+      feeHtml+='<div class="fsect"><div class="fsect-lbl">Card-Based Money Movement \u2014 Visa Direct / Mastercard Send</div>';
       feeHtml+=feeInputRow('Push fee','pushFee',uc.pushRange,midStr(uc.pushLo,uc.pushHi),uc.id,st.pushFee,st.freeCard);
       feeHtml+=feeInputRow('Pull fee','pullFee',uc.pullRange,midStr(uc.pullLo,uc.pullHi),uc.id,st.pullFee,st.freeCard);
       feeHtml+='<div class="free-row"><input type="checkbox" id="frc-'+uc.id+'" '+(st.freeCard?'checked':'')+' data-uc="'+uc.id+'" data-freetype="card"><label for="frc-'+uc.id+'">Offer at no charge \u2014 rely on indirect benefits only</label></div></div>';
     }
     var d=document.createElement('div');d.className='ucw'+(st.sel?' on':'');d.id='ucw-'+uc.id;
     d.innerHTML='<label class="uch" for="ucb-'+uc.id+'"><input type="checkbox" id="ucb-'+uc.id+'" '+(st.sel?'checked':'')+' data-uc="'+uc.id+'" data-sel="1" style="accent-color:#00529B;cursor:pointer;flex-shrink:0;margin-top:2px"><div><span class="ucn">'+uc.nm+'</span><span class="ucd">'+uc.ds+'</span></div></label>'
-      +'<div class="ucp"><p style="font-size:12px;color:#666666;margin-bottom:12px"><strong>Estimated monthly transactions:</strong> '+mv.toLocaleString()+' <span style="font-weight:400;color:#999999">(based on $'+parseFloat(S.assets).toFixed(parseFloat(S.assets)<1?2:1)+'B assets &middot; '+S.cons+'% consumer / '+S.smb+'% SMB / '+S.corp+'% corporate &middot; Source: Federal Reserve 2022 Payments Study; '+uc.fsrc+')</span></p>'+feeHtml+'</div>';
+      +'<div class="ucp"><p style="font-size:12px;color:#666666;margin-bottom:12px"><strong>Estimated monthly transactions:</strong> '+mv.toLocaleString()+' <span style="font-weight:400;color:#999999">(based on $'+parseFloat(S.assets).toFixed(parseFloat(S.assets)<1?2:1)+'B assets \u00b7 '+S.cons+'% consumer / '+S.smb+'% SMB / '+S.corp+'% corporate \u00b7 Source: Federal Reserve 2022 Payments Study; '+uc.fsrc+')</span></p>'+feeHtml+'</div>';
     c.appendChild(d);
   });
   c.querySelectorAll('input[data-sel]').forEach(function(inp){inp.addEventListener('change',function(){var id=inp.getAttribute('data-uc');UCS[id].sel=inp.checked;var w=document.getElementById('ucw-'+id);if(w)w.classList.toggle('on',inp.checked);});});
@@ -502,7 +502,7 @@ function getRecs(mat,roi){
   var c=S.cons,s=S.smb,g=S.corp,e=mode==='estimator';
   if(mat===1)recs.push({type:'strat',txt:'Receive-only instant payments is an efficient, low-lift entry point \u2014 most core processors can enable it within 30\u201360 days. '+(e?'This scenario baseline shows the opportunity value of adding faster payments capabilities.':'Your institution would immediately enable real-time incoming credits for all customers.')+' Indirect value from check displacement savings, deposit retention, and fraud cost reduction begins accruing from day one, with estimated Year 1 value of <strong>'+fmtRange(roi.totY[0])+'</strong>.'});
   else if(mat===2)recs.push({type:'strat',txt:(e?'This scenario models receive-only capability. ':'')+'Activating send capability is the natural next step \u2014 it unlocks direct fee income on top of the indirect value already captured. A send-enabled strategy could generate estimated Year 3 total annual value of <strong>'+fmtRange(roi.totY[2])+'</strong>.'});
-  else if(mat===3)recs.push({type:'strat',txt:(e?'This scenario models a single capability. ':'')+'Adding a complementary faster payments rail broadens your reach across customer segments and use cases. '+(hasSend?'Card-based money movement is the preferred delivery mechanism for insurance companies, earned wage access providers, and gig economy platforms \u2014 a natural complement to your instant payment capabilities.':'Activating send on FedNow and/or RTP brings powerful additional capabilities including Request for Payment, B2B treasury payments, and bill pay modernization.')});
+  else if(mat===3)recs.push({type:'strat',txt:(e?'This scenario models a single rail capability. ':'')+'Adding a complementary faster payments rail broadens your reach across customer segments and use cases. '+(hasSend?'Card-based money movement is the preferred delivery mechanism for insurance companies, earned wage access providers, and gig economy platforms \u2014 a natural complement to your instant payment capabilities.':'Activating send on FedNow and/or RTP brings powerful additional capabilities including Request for Payment, B2B treasury payments, and bill pay modernization.')});
   else recs.push({type:'strat',txt:(e?'This scenario models a multi-rail strategy. ':'')+'The next layer of value comes from deepening specific volume relationships with commercial clients, insurance carriers, or gig economy platforms. At a Year 3 projection of <strong>'+fmtRange(roi.totY[2])+'</strong>, a 20% uplift in adoption rate would add an estimated <strong>'+fmtRange(Math.round(roi.totY[2]*.20))+'</strong> in annual value.'});
   if(!hasCard)recs.push({type:'strat',txt:'Card-based money movement is a high-growth capability actively sought by insurance companies, earned wage access providers, gig economy platforms, and marketplace operators. Instant push disbursements and pull transactions via Visa Direct and/or Mastercard Send complement your account-based faster payment capabilities, reaching additional use cases and customer populations.'});
   else if(!hasSend&&!hasRecvOnly)recs.push({type:'strat',txt:'Instant payments on FedNow and/or RTP bring powerful additional capabilities to your faster payments portfolio \u2014 including Request for Payment, B2B treasury payments, and bill pay modernization. RTP supports transactions up to $10M, making same-day bulk commercial settlement viable, while FedNow\'s broad network extends real-time reach to counterparties across the country.'});
@@ -528,10 +528,19 @@ function getStageBlendedFee(ucId,rm,fm){
   }
   return iVf*iF+cVf*cF;
 }
-function calcStageValue(rm,ucIds,fm){
+function calcStageValue(rm,ucIds,fm,feeUcIds){
+  // ucIds: all use cases contributing to indirect value (displacement, retention, fraud)
+  // feeUcIds: subset that also generates fee revenue (defaults to ucIds if not specified)
+  if(!feeUcIds)feeUcIds=ucIds;
+  var feeSet={};feeUcIds.forEach(function(id){feeSet[id]=true;});
   var ab=parseFloat(S.assets)||0,feeTotal=0,dispTotal=0,txTotal=0;
   ucIds.forEach(function(ucId){
-    var st=UCS[ucId],effFm=(fm==='carry'&&!st.sel)?'midpoint':fm,bf=getStageBlendedFee(ucId,rm,effFm),mVol=ab*adjFactor(ucId);
+    var st=UCS[ucId],bf=0;
+    if(feeSet[ucId]){
+      var effFm=(fm==='carry'&&!st.sel)?'midpoint':fm;
+      bf=getStageBlendedFee(ucId,rm,effFm);
+    }
+    var mVol=ab*adjFactor(ucId);
     RAMP.forEach(function(r){var ann=mVol*r*12;feeTotal+=ann*bf;dispTotal+=ann*.10*10;txTotal+=ann;});
   });
   var cust=Math.min(Math.round(ab*70000),50000000);
@@ -542,23 +551,26 @@ function calcSliderStages(){
   var hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecv=railSel.has('receive');
   var recvOnly=isRecvOnly(),isNotLive=railSel.has('none')||railSel.size===0;
   var hp=calcHighPriorityUCs(4),all=UC_DATA.map(function(u){return u.id;}),stages=[];
+  // ucIds is always ALL use cases so indirect value (displacement, retention, fraud)
+  // is calculated across the full use case set in every scenario.
+  // feeUcIds controls which subset generates fee revenue.
   if(isNotLive){
-    stages.push({label:'Receive Only',sub:'All use cases, $0 fee',rm:'receive',ucIds:all,fm:'zero'});
-    stages.push({label:'Send & Receive',sub:'High-priority use cases',rm:'send',ucIds:hp,fm:'midpoint'});
-    stages.push({label:'Send & Receive',sub:'All use cases',rm:'send',ucIds:all,fm:'midpoint'});
-    stages.push({label:'Send, Receive & Card',sub:'High-priority use cases',rm:'both',ucIds:hp,fm:'midpoint'});
-    stages.push({label:'Send, Receive & Card',sub:'All use cases',rm:'both',ucIds:all,fm:'midpoint'});
+    stages.push({label:'Receive Only',sub:'All use cases, $0 fee',rm:'receive',ucIds:all,feeUcIds:all,fm:'zero'});
+    stages.push({label:'Send & Receive',sub:'High-priority use cases',rm:'send',ucIds:all,feeUcIds:hp,fm:'midpoint'});
+    stages.push({label:'Send & Receive',sub:'All use cases',rm:'send',ucIds:all,feeUcIds:all,fm:'midpoint'});
+    stages.push({label:'Send, Receive & Card',sub:'High-priority use cases',rm:'both',ucIds:all,feeUcIds:hp,fm:'midpoint'});
+    stages.push({label:'Send, Receive & Card',sub:'All use cases',rm:'both',ucIds:all,feeUcIds:all,fm:'midpoint'});
   } else if(recvOnly){
-    stages.push({label:'Send & Receive',sub:'High-priority use cases',rm:'send',ucIds:hp,fm:'carry'});
-    stages.push({label:'Send & Receive',sub:'All use cases',rm:'send',ucIds:all,fm:'carry'});
-    stages.push({label:'Send, Receive & Card',sub:'High-priority use cases',rm:'both',ucIds:hp,fm:'carry'});
-    stages.push({label:'Send, Receive & Card',sub:'All use cases',rm:'both',ucIds:all,fm:'carry'});
+    stages.push({label:'Send & Receive',sub:'High-priority use cases',rm:'send',ucIds:all,feeUcIds:hp,fm:'carry'});
+    stages.push({label:'Send & Receive',sub:'All use cases',rm:'send',ucIds:all,feeUcIds:all,fm:'carry'});
+    stages.push({label:'Send, Receive & Card',sub:'High-priority use cases',rm:'both',ucIds:all,feeUcIds:hp,fm:'carry'});
+    stages.push({label:'Send, Receive & Card',sub:'All use cases',rm:'both',ucIds:all,feeUcIds:all,fm:'carry'});
   } else if(hasSend&&!hasCard){
-    stages.push({label:'Add Card-Based',sub:'High-priority use cases',rm:'both',ucIds:hp,fm:'carry'});
-    stages.push({label:'Add Card-Based',sub:'All use cases',rm:'both',ucIds:all,fm:'carry'});
+    stages.push({label:'Add Card-Based',sub:'High-priority use cases',rm:'both',ucIds:all,feeUcIds:hp,fm:'carry'});
+    stages.push({label:'Add Card-Based',sub:'All use cases',rm:'both',ucIds:all,feeUcIds:all,fm:'carry'});
   } else if(hasCard&&!hasSend&&!hasRecv){
-    stages.push({label:'Add Send & Receive',sub:'High-priority use cases',rm:'both',ucIds:hp,fm:'carry'});
-    stages.push({label:'Add Send & Receive',sub:'All use cases',rm:'both',ucIds:all,fm:'carry'});
+    stages.push({label:'Add Send & Receive',sub:'High-priority use cases',rm:'both',ucIds:all,feeUcIds:hp,fm:'carry'});
+    stages.push({label:'Add Send & Receive',sub:'All use cases',rm:'both',ucIds:all,feeUcIds:all,fm:'carry'});
   }
   return stages;
 }
@@ -570,7 +582,7 @@ function renderSlider(currentT3){
     if(railSel.has('send')&&railSel.has('card'))el.innerHTML='<div class="slider-section"><div class="slider-title">Explore the value of going further</div><p class="slider-desc">Your institution has both instant payments and card-based money movement capabilities active \u2014 you\'re at full multi-rail implementation. The recommendations below focus on deepening use case activation and volume growth within your current infrastructure.</p></div>';
     else el.innerHTML='';return;
   }
-  var hp=calcHighPriorityUCs(4),stageVals=stages.map(function(st){return calcStageValue(st.rm,st.ucIds,st.fm);});
+  var hp=calcHighPriorityUCs(4),stageVals=stages.map(function(st){return calcStageValue(st.rm,st.ucIds,st.fm,st.feeUcIds);});
   var html='<div class="slider-section"><div class="slider-title">Explore the value of going further</div>'
     +'<p class="slider-desc">Click a scenario below to see the projected 3-year value of advancing your faster payments capabilities. High-priority use cases are your top 4 based on customer mix'+(payMixEntered?' and payment method mix':'')+': <strong>'+hp.map(function(id){return UC_DATA.find(function(u){return u.id===id;}).nm;}).join(', ')+'</strong>. All figures use a \u00b110% estimated range; fee projections use midpoints of observed market ranges for use cases not yet priced in your model.</p>'
     +'<div class="slider-stages">';
@@ -616,7 +628,7 @@ function renderResults(){
     +'<tr><td>Payment method mix &amp; high-priority use cases</td><td>If entered, use case priority rankings combine customer mix affinity scores with payment method displacement signals: checks &rarr; bill pay, B2B, real estate; wires &rarr; B2B, real estate; ACH credits &rarr; payroll, insurance, gig; ACH debits &rarr; bill pay, P2P; Same-Day ACH credits &rarr; payroll, B2B; Same-Day ACH debits &rarr; bill pay; card &rarr; gig, gaming, insurance. Top 4 by combined score are high-priority in the slider. If blank, ranking uses customer mix affinity alone.</td><td>FPC model assumption; mapping based on displacement research from Nacha, AFP, and Federal Reserve Financial Services</td></tr>'
     +'<tr><td>Use-case base volume factors (per $1B assets/month)</td><td>B2B 8,000 &middot; Bill pay 4,000 &middot; P2P 3,500 &middot; Payroll 2,000 &middot; Gig 1,500 &middot; Gaming 1,000 &middot; Insurance 500 &middot; Real estate 150</td><td>Fed Payments Study 2022; AFP Electronic Payments Survey; Nacha ACH volume data</td></tr>'
     +'<tr><td>Adoption ramp</td><td>Year 1: 5% &middot; Year 2: 18% &middot; Year 3: 35% of addressable monthly volume</td><td>Same Day ACH adoption trajectory 2016&ndash;2021 (Nacha); FedNow Service volume growth data, July 2023&ndash;May 2025 (Federal Reserve Financial Services)</td></tr>'
-    +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
+    +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee. In the &ldquo;Explore the value of going further&rdquo; slider, indirect value (check displacement, deposit retention, fraud reduction) is always calculated across all use cases; the high-priority vs. all-use-cases distinction controls only which use cases generate fee revenue.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
     +'<tr><td>Check displacement savings</td><td>10% of faster payment transactions displace a check or ACH item; $10.00 fully-loaded savings per displaced item.</td><td>AFP 2024 Payments Fraud and Control Survey; Nacha check processing cost research ($8&ndash;$12 all-in)</td></tr>'
     +'<tr><td>Deposit retention value</td><td>Customer estimate: ~'+cust.toLocaleString()+' accounts (assets &times; $14K avg deposit &divide; 70% dep/asset ratio). 0.5% annual retention lift; $200 avg annual revenue per retained customer. Benefit ramps with adoption curve.</td><td>FDIC 2023 average deposit account balance data; FI customer churn and lifetime value benchmarks</td></tr>'
     +'<tr><td>Fraud cost reduction</td><td>10% of faster payment transactions displace items with higher fraud incidence; 0.49% net fraud rate differential; $2,000 average transaction value on displaced items.</td><td>AFP 2024 Payments Fraud and Control Survey; FedNow Service and RTP&reg; network fraud incident data</td></tr>'
