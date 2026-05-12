@@ -55,9 +55,14 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
 .tot-row{display:flex;align-items:center;gap:10px;font-size:12px;color:#666666;margin-bottom:4px}
 .pm-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .pm-card{border:1px solid #E5E5E5;border-radius:6px;padding:10px 12px;background:#FFFFFF}
-.pm-lbl{font-size:11px;font-weight:500;color:#666666;margin-bottom:6px;line-height:1.4}
-.pm-card input[type=number]{width:62px;padding:5px 8px;border:1px solid #CCCCCC;border-radius:6px;font-size:13px;background:#FFFFFF;color:#222222;display:block;margin-bottom:4px;font-family:inherit}
-.pm-sub{font-size:10px;color:#999999}
+.pm-lbl{font-size:11px;font-weight:600;color:#222222;margin-bottom:8px;line-height:1.4}
+.pm-field{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.pm-flbl{font-size:10px;color:#666666;flex-shrink:0;padding-right:4px}
+.pm-inp{width:94px;padding:5px 8px;border:1px solid #CCCCCC;border-radius:6px;font-size:12px;background:#FFFFFF;color:#222222;font-family:inherit;text-align:right}
+.pm-dfw{position:relative;width:94px}
+.pm-dfp{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#999999;pointer-events:none}
+.pm-dinp{width:100%;padding:5px 8px 5px 16px;border:1px solid #CCCCCC;border-radius:6px;font-size:12px;background:#FFFFFF;color:#222222;font-family:inherit;text-align:right}
+.pm-totrow{font-size:12px;color:#666666;margin-bottom:4px;min-height:18px}
 .rcl{display:flex;flex-direction:column;gap:8px}
 .rc{position:relative}
 .rc input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
@@ -210,19 +215,20 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
   <div class="tot-row"><span>Total:</span><span id="mixTot" style="font-size:12px;font-weight:600">100%</span><span id="mixWarn" style="font-size:12px;color:#C0392B;display:none">&mdash; must equal 100% to continue</span></div>
   <p class="sn" style="margin-bottom:1.5rem">Selecting an institution type above pre-populates typical values. Adjust to reflect your actual customer mix. Industry benchmarks: community banks ~70/28/2; mid-size ~55/35/10; regional ~45/40/15 (FDIC 2023).</p>
   <p class="slbl">Payment method mix <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:12px;color:#999999">&mdash; optional</span></p>
-  <div class="note-box">If you leave this section blank, the model will use general industry data to create estimates. If you fill it in, all fields must total 100%. Your payment method mix is used to identify your highest-priority use cases and sharpen displacement and fraud reduction projections.</div>
+  <div class="note-box">If you leave this section blank, the model will use general industry data to create estimates. If you fill it in, enter your approximate monthly transaction counts and dollar volumes for each payment type. Your payment method mix is used to identify your highest-priority use cases and sharpen displacement and fraud reduction projections.</div>
   <div class="pm-grid">
-    <div class="pm-card"><div class="pm-lbl">Checks</div><input type="number" id="pmCheck" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">ACH Debits</div><input type="number" id="pmAchDeb" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">ACH Credits</div><input type="number" id="pmAchCr" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Wires</div><input type="number" id="pmWire" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Same-Day ACH Debits</div><input type="number" id="pmSdAchDeb" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Same-Day ACH Credits</div><input type="number" id="pmSdAchCr" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Instant Payments</div><input type="number" id="pmInstant" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Card-Based</div><input type="number" id="pmCard" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
-    <div class="pm-card"><div class="pm-lbl">Other</div><input type="number" id="pmOther" min="0" max="100" step="1" placeholder="0"><div class="pm-sub">% of tx volume</div></div>
+    <div class="pm-card"><div class="pm-lbl">Checks</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmCheckCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmCheckDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">ACH Debits</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmAchDebCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmAchDebDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">ACH Credits</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmAchCrCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmAchCrDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Wires</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmWireCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmWireDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Same-Day ACH Debits</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmSdAchDebCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmSdAchDebDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Same-Day ACH Credits</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmSdAchCrCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmSdAchCrDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Instant Payments</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmInstantCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmInstantDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Card-Based</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmCardCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmCardDol" min="0" step="1000" placeholder="0"></div></div></div>
+    <div class="pm-card"><div class="pm-lbl">Other</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmOtherCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmOtherDol" min="0" step="1000" placeholder="0"></div></div></div>
   </div>
-  <div class="tot-row"><span>Payment mix total:</span><span id="pmTot" style="font-size:12px;font-weight:600">0%</span><span id="pmWarn" style="font-size:12px;color:#C0392B;display:none">&mdash; must equal 100% or be left blank</span></div>
+  <div class="pm-totrow" id="pmTotalRow"></div>
+  <p class="sn" style="margin-top:4px">Enter actual monthly figures. Dollar amounts in actual dollars (e.g., 500000 for $500,000). If you enter transaction counts only, dollar volumes are optional. Leave all fields blank to use general industry estimates.</p>
 </div>
 <div class="step" id="step2">
   <div class="rcl" id="railList"></div>
@@ -275,8 +281,9 @@ var MAT=[
 var NEUTRAL={c:.60,s:.30,g:.10},RAMP=[.05,.18,.35];
 var CLR={fee:'#00529B',disp:'#046a38',ret:'#709945',fraud:'#4A9BDE'};
 var INST_MIX={bank:{c:55,s:35,g:10},cu:{c:85,s:14,g:1},thrift:{c:80,s:18,g:2},other:{c:60,s:30,g:10}};
-var PM_IDS=['pmCheck','pmAchDeb','pmAchCr','pmWire','pmSdAchDeb','pmSdAchCr','pmInstant','pmCard','pmOther'];
 var PM_KEYS=['check','achDebit','achCredit','wire','sdAchDeb','sdAchCr','instant','card','other'];
+var PM_CT_IDS=['pmCheckCt','pmAchDebCt','pmAchCrCt','pmWireCt','pmSdAchDebCt','pmSdAchCrCt','pmInstantCt','pmCardCt','pmOtherCt'];
+var PM_DOL_IDS=['pmCheckDol','pmAchDebDol','pmAchCrDol','pmWireDol','pmSdAchDebDol','pmSdAchCrDol','pmInstantDol','pmCardDol','pmOtherDol'];
 var PM_UC_MAP={
   p2p:{achDebit:.3,check:.1},
   payroll:{achCredit:.4,sdAchCr:.2,check:.2},
@@ -288,22 +295,27 @@ var PM_UC_MAP={
   gaming:{card:.5}
 };
 var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10},railSel=new Set(),chartInst=null;
-var payMix={check:0,achDebit:0,achCredit:0,wire:0,sdAchDeb:0,sdAchCr:0,instant:0,card:0,other:0};
+var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
 var UCS={};
 function resetUCS(){UC_DATA.forEach(function(u){UCS[u.id]={sel:false,freeInstant:false,freeCard:false,sendFee:null,recvFee:null,pushFee:null,pullFee:null};});}
 resetUCS();
 function isRecvOnly(){return railSel.has('receive')&&!railSel.has('send')&&!railSel.has('card');}
-function setInstType(t){var m=INST_MIX[t]||INST_MIX.other;document.getElementById('pCons').value=m.c;document.getElementById('pSmb').value=m.s;document.getElementById('pCorp').value=m.g;S.cons=m.c;S.smb=m.s;S.corp=m.g;mixChg();}
+function setInstType(t){
+  var m=INST_MIX[t]||INST_MIX.other;
+  document.getElementById('pCons').value=m.c;document.getElementById('pSmb').value=m.s;document.getElementById('pCorp').value=m.g;
+  S.cons=m.c;S.smb=m.s;S.corp=m.g;mixChg();
+}
 function setMode(m){
-  mode=m;document.getElementById('mEst').checked=(m==='estimator');document.getElementById('mAss').checked=(m==='assessment');
+  mode=m;
+  document.getElementById('mEst').checked=(m==='estimator');document.getElementById('mAss').checked=(m==='assessment');
   var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');
   S={step:1,assets:'',cons:60,smb:30,corp:10};railSel.clear();resetUCS();selectedSliderStage=-1;
-  payMix={check:0,achDebit:0,achCredit:0,wire:0,sdAchDeb:0,sdAchCr:0,instant:0,card:0,other:0};payMixEntered=false;
+  payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   var aIn=document.getElementById('aIn');if(aIn)aIn.value='';
   document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
-  PM_IDS.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  PM_CT_IDS.concat(PM_DOL_IDS).forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   mixChg();payMixChg();renderRailList();if(chartInst){chartInst.destroy();chartInst=null;}
   document.getElementById('step1').classList.add('on');rprog();rhdr();rnav();hvm();
 }
@@ -346,13 +358,23 @@ function mixChg(){
   var tot=S.cons+S.smb+S.corp,el=document.getElementById('mixTot'),w=document.getElementById('mixWarn');
   if(el){el.textContent=tot+'%';el.style.color=tot===100?'#046a38':'#C0392B';}if(w)w.style.display=tot!==100?'inline':'none';
 }
+function fmtPmDol(v){if(v>=1000000000)return'$'+(v/1000000000).toFixed(1)+'B';if(v>=1000000)return'$'+(v/1000000).toFixed(1)+'M';if(v>=1000)return'$'+Math.round(v/1000).toLocaleString()+'K';return'$'+v.toLocaleString();}
+function fmtPmCt(v){if(v>=1000000)return(v/1000000).toFixed(1)+'M';if(v>=1000)return Math.round(v/1000).toLocaleString()+'K';return v.toLocaleString();}
 function payMixChg(){
-  var allBlank=true,tot=0;
-  PM_IDS.forEach(function(id,i){var v=parseInt(document.getElementById(id).value)||0;payMix[PM_KEYS[i]]=v;if(v>0)allBlank=false;tot+=v;});
+  var allBlank=true,totCt=0,totDol=0;
+  PM_KEYS.forEach(function(k,i){
+    var ct=parseInt(document.getElementById(PM_CT_IDS[i]).value)||0;
+    var dol=parseFloat(document.getElementById(PM_DOL_IDS[i]).value)||0;
+    payMix[k]={ct:ct,dol:dol};
+    if(ct>0||dol>0)allBlank=false;
+    totCt+=ct;totDol+=dol;
+  });
   payMixEntered=!allBlank;
-  var el=document.getElementById('pmTot'),w=document.getElementById('pmWarn');
-  if(el){el.textContent=tot+'%';el.style.color=(tot===100||allBlank)?'#046a38':'#C0392B';}
-  if(w)w.style.display=(!allBlank&&tot!==100)?'inline':'none';
+  var tr=document.getElementById('pmTotalRow');
+  if(tr){
+    if(!allBlank){tr.innerHTML='<span style="color:#046a38;font-weight:500">Total entered: '+fmtPmCt(totCt)+' transactions/month'+(totDol>0?' &middot; '+fmtPmDol(totDol)+' monthly volume':'')+'</span>';}
+    else{tr.innerHTML='';}
+  }
 }
 function hRail(inp){
   if(inp.value==='none'){if(inp.checked){document.querySelectorAll('#railList input[type=checkbox]').forEach(function(c){if(c!==inp)c.checked=false;});railSel.clear();railSel.add('none');}else railSel.delete('none');}
@@ -362,7 +384,6 @@ function validate(){
   if(S.step===1){
     if(!(parseFloat(S.assets)>0)){svm('Please enter your institution\'s total assets to continue.');return false;}
     if(S.cons+S.smb+S.corp!==100){svm('Customer mix must total 100% to continue.');return false;}
-    if(payMixEntered){var t=PM_KEYS.reduce(function(a,k){return a+payMix[k];},0);if(t!==100){svm('Payment method mix must total 100% or be left blank.');return false;}}
   }
   if(S.step===3&&!isRecvOnly()&&!Object.values(UCS).some(function(u){return u.sel;})){svm('Select at least one use case to model.');return false;}
   hvm();return true;
@@ -381,8 +402,16 @@ function adjFactor(ucId){
 }
 function calcHighPriorityUCs(n){
   var scores=UC_DATA.map(function(uc){
-    var a=uc.aff,c=S.cons/100,s=S.smb/100,g=S.corp/100,mixScore=c*a.c+s*a.s+g*a.g,payScore=0;
-    if(payMixEntered){var mp=PM_UC_MAP[uc.id]||{},raw=0;Object.keys(mp).forEach(function(k){raw+=(payMix[k]||0)*mp[k];});payScore=raw/100;}
+    var a=uc.aff,c=S.cons/100,s=S.smb/100,g=S.corp/100;
+    var mixScore=c*a.c+s*a.s+g*a.g,payScore=0;
+    if(payMixEntered){
+      var totalCt=PM_KEYS.reduce(function(a,k){return a+(payMix[k]?payMix[k].ct:0);},0);
+      if(totalCt>0){
+        var mp=PM_UC_MAP[uc.id]||{},raw=0;
+        Object.keys(mp).forEach(function(k){var pct=payMix[k]?payMix[k].ct/totalCt:0;raw+=pct*100*mp[k];});
+        payScore=raw/100;
+      }
+    }
     return{id:uc.id,score:payMixEntered?(mixScore+payScore)/2:mixScore};
   });
   return scores.sort(function(a,b){return b.score-a.score;}).slice(0,n).map(function(s){return s.id;});
@@ -459,13 +488,30 @@ function calcUCVal(ucId){
   return RAMP.map(function(r){var ann=mVol*r*12;return{ann:ann,fv:ann*bf,dv:ann*.10*10};});
 }
 function calcROI(){
-  var ab=parseFloat(S.assets)||0,feeY=[0,0,0],dispY=[0,0,0],txY=[0,0,0],ucFeeY3={};
+  var ab=parseFloat(S.assets)||0,feeY=[0,0,0],dispYEst=[0,0,0],txY=[0,0,0],ucFeeY3={};
   var selUCs=isRecvOnly()?UC_DATA.map(function(u){return u.id;}):Object.entries(UCS).filter(function(e){return e[1].sel;}).map(function(e){return e[0];});
-  selUCs.forEach(function(ucId){var yrs=calcUCVal(ucId);ucFeeY3[ucId]=yrs[2].fv;yrs.forEach(function(y,i){feeY[i]+=y.fv;dispY[i]+=y.dv;txY[i]+=y.ann;});});
+  selUCs.forEach(function(ucId){
+    var yrs=calcUCVal(ucId);ucFeeY3[ucId]=yrs[2].fv;
+    yrs.forEach(function(y,i){feeY[i]+=y.fv;dispYEst[i]+=y.dv;txY[i]+=y.ann;});
+  });
+  // Check displacement: if the user entered actual monthly check volume, calculate savings
+  // directly from that figure. ~30% of checks are estimated convertible to faster payments
+  // within a 3-year horizon, consistent with observed check decline rates (Fed 2022 Payments Study;
+  // AFP 2024). The adoption ramp is applied to the convertible pool each year.
+  // If no check count was entered, fall back to the asset-based estimate (10% of faster
+  // payment transaction volume * $10 per displaced item).
+  var checkCt=payMix.check?payMix.check.ct:0;
+  var dispY;
+  if(checkCt>0){
+    var convChecks=checkCt*0.30;
+    dispY=RAMP.map(function(r){return Math.round(convChecks*r*12*10);});
+  } else {
+    dispY=dispYEst;
+  }
   var cust=Math.min(Math.round(ab*70000),50000000);
   var retY=RAMP.map(function(r){return Math.round(cust*(r/.35)*.005*200);});
   var fraudY=txY.map(function(tx){return Math.round(tx*.10*.0049*2000);});
-  var totY=[0,1,2].map(function(i){return Math.round(feeY[i])+Math.round(dispY[i])+retY[i]+fraudY[i];});
+  var totY=[0,1,2].map(function(i){return Math.round(feeY[i])+dispY[i]+retY[i]+fraudY[i];});
   return{feeY:feeY.map(Math.round),dispY:dispY.map(Math.round),retY:retY,fraudY:fraudY,totY:totY,t3:totY.reduce(function(a,b){return a+b;},0),cust:cust,ucFeeY3:ucFeeY3};
 }
 function fmtD(v){var av=Math.abs(v);if(av>=1000000)return'$'+(v/1000000).toFixed(1)+'M';if(av>=1000)return'$'+Math.round(v/1000)+'K';return'$'+Math.round(v);}
@@ -495,7 +541,10 @@ function repFee(ucId){
   if(hasSend&&!hasCard)return sm*.5+rm*.5;if(hasCard&&!hasSend&&!hasRecvOnly)return pm*.7+plm*.3;
   if((hasSend||hasRecvOnly)&&hasCard)return(hasSend?sm*.5+rm*.5:0)*.5+(pm*.7+plm*.3)*.5;return sm;
 }
-function calcIncrementalY3(ucId){var ab=parseFloat(S.assets)||0,mVol=ab*adjFactor(ucId),fee=repFee(ucId),ann=mVol*RAMP[2]*12;return Math.round(ann*fee+ann*.10*10+ann*.10*.0049*2000);}
+function calcIncrementalY3(ucId){
+  var ab=parseFloat(S.assets)||0,mVol=ab*adjFactor(ucId),fee=repFee(ucId),ann=mVol*RAMP[2]*12;
+  return Math.round(ann*fee+ann*.10*10+ann*.10*.0049*2000);
+}
 function getRecs(mat,roi){
   var recs=[],hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecvOnly=isRecvOnly();
   var selIds=isRecvOnly()?UC_DATA.map(function(u){return u.id;}):Object.entries(UCS).filter(function(e){return e[1].sel;}).map(function(e){return e[0];});
@@ -529,17 +578,12 @@ function getStageBlendedFee(ucId,rm,fm){
   return iVf*iF+cVf*cF;
 }
 function calcStageValue(rm,ucIds,fm,feeUcIds){
-  // ucIds: all use cases contributing to indirect value (displacement, retention, fraud)
-  // feeUcIds: subset that also generates fee revenue (defaults to ucIds if not specified)
   if(!feeUcIds)feeUcIds=ucIds;
   var feeSet={};feeUcIds.forEach(function(id){feeSet[id]=true;});
   var ab=parseFloat(S.assets)||0,feeTotal=0,dispTotal=0,txTotal=0;
   ucIds.forEach(function(ucId){
     var st=UCS[ucId],bf=0;
-    if(feeSet[ucId]){
-      var effFm=(fm==='carry'&&!st.sel)?'midpoint':fm;
-      bf=getStageBlendedFee(ucId,rm,effFm);
-    }
+    if(feeSet[ucId]){var effFm=(fm==='carry'&&!st.sel)?'midpoint':fm;bf=getStageBlendedFee(ucId,rm,effFm);}
     var mVol=ab*adjFactor(ucId);
     RAMP.forEach(function(r){var ann=mVol*r*12;feeTotal+=ann*bf;dispTotal+=ann*.10*10;txTotal+=ann;});
   });
@@ -551,9 +595,6 @@ function calcSliderStages(){
   var hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecv=railSel.has('receive');
   var recvOnly=isRecvOnly(),isNotLive=railSel.has('none')||railSel.size===0;
   var hp=calcHighPriorityUCs(4),all=UC_DATA.map(function(u){return u.id;}),stages=[];
-  // ucIds is always ALL use cases so indirect value (displacement, retention, fraud)
-  // is calculated across the full use case set in every scenario.
-  // feeUcIds controls which subset generates fee revenue.
   if(isNotLive){
     stages.push({label:'Receive Only',sub:'All use cases, $0 fee',rm:'receive',ucIds:all,feeUcIds:all,fm:'zero'});
     stages.push({label:'Send & Receive',sub:'High-priority use cases',rm:'send',ucIds:all,feeUcIds:hp,fm:'midpoint'});
@@ -628,8 +669,8 @@ function renderResults(){
     +'<tr><td>Payment method mix &amp; high-priority use cases</td><td>If entered, use case priority rankings combine customer mix affinity scores with payment method displacement signals: checks &rarr; bill pay, B2B, real estate; wires &rarr; B2B, real estate; ACH credits &rarr; payroll, insurance, gig; ACH debits &rarr; bill pay, P2P; Same-Day ACH credits &rarr; payroll, B2B; Same-Day ACH debits &rarr; bill pay; card &rarr; gig, gaming, insurance. Top 4 by combined score are high-priority in the slider. If blank, ranking uses customer mix affinity alone.</td><td>FPC model assumption; mapping based on displacement research from Nacha, AFP, and Federal Reserve Financial Services</td></tr>'
     +'<tr><td>Use-case base volume factors (per $1B assets/month)</td><td>B2B 8,000 &middot; Bill pay 4,000 &middot; P2P 3,500 &middot; Payroll 2,000 &middot; Gig 1,500 &middot; Gaming 1,000 &middot; Insurance 500 &middot; Real estate 150</td><td>Fed Payments Study 2022; AFP Electronic Payments Survey; Nacha ACH volume data</td></tr>'
     +'<tr><td>Adoption ramp</td><td>Year 1: 5% &middot; Year 2: 18% &middot; Year 3: 35% of addressable monthly volume</td><td>Same Day ACH adoption trajectory 2016&ndash;2021 (Nacha); FedNow Service volume growth data, July 2023&ndash;May 2025 (Federal Reserve Financial Services)</td></tr>'
-    +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee. In the &ldquo;Explore the value of going further&rdquo; slider, indirect value (check displacement, deposit retention, fraud reduction) is always calculated across all use cases; the high-priority vs. all-use-cases distinction controls only which use cases generate fee revenue.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
-    +'<tr><td>Check displacement savings</td><td>10% of faster payment transactions displace a check or ACH item; $10.00 fully-loaded savings per displaced item.</td><td>AFP 2024 Payments Fraud and Control Survey; Nacha check processing cost research ($8&ndash;$12 all-in)</td></tr>'
+    +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
+    +'<tr><td>Check displacement savings</td><td><strong>If monthly check count was entered:</strong> 30% of monthly check transactions are estimated to be convertible to faster payments within a 3-year horizon. That convertible pool is applied to the adoption ramp (Year 1: 5%, Year 2: 18%, Year 3: 35%), then multiplied by $10.00 per displaced item. <strong>If no check count entered:</strong> 10% of estimated faster payment transaction volume is assumed to displace a check or ACH item, multiplied by $10.00 per item.</td><td>AFP 2024 Payments Fraud and Control Survey; Federal Reserve 2022 Payments Study (check volume decline trends); Nacha check processing cost research ($8&ndash;$12 all-in)</td></tr>'
     +'<tr><td>Deposit retention value</td><td>Customer estimate: ~'+cust.toLocaleString()+' accounts (assets &times; $14K avg deposit &divide; 70% dep/asset ratio). 0.5% annual retention lift; $200 avg annual revenue per retained customer. Benefit ramps with adoption curve.</td><td>FDIC 2023 average deposit account balance data; FI customer churn and lifetime value benchmarks</td></tr>'
     +'<tr><td>Fraud cost reduction</td><td>10% of faster payment transactions displace items with higher fraud incidence; 0.49% net fraud rate differential; $2,000 average transaction value on displaced items.</td><td>AFP 2024 Payments Fraud and Control Survey; FedNow Service and RTP&reg; network fraud incident data</td></tr>'
     +'<tr><td>Projection range</td><td>All figures shown as a &plusmn;10% range around the model midpoint, reflecting variability in adoption rates, pricing realization, and use case mix.</td><td>FPC model assumption based on variance observed in FI faster payments adoption data</td></tr>'
@@ -639,10 +680,10 @@ function renderResults(){
 }
 function restart(){
   S={step:1,assets:'',cons:60,smb:30,corp:10};railSel.clear();resetUCS();selectedSliderStage=-1;
-  payMix={check:0,achDebit:0,achCredit:0,wire:0,sdAchDeb:0,sdAchCr:0,instant:0,card:0,other:0};payMixEntered=false;
+  payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   document.getElementById('aIn').value='';document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
-  PM_IDS.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  PM_CT_IDS.concat(PM_DOL_IDS).forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   mixChg();payMixChg();renderRailList();if(chartInst){chartInst.destroy();chartInst=null;}
   document.getElementById('step4').classList.remove('on');document.getElementById('step1').classList.add('on');rprog();rhdr();rnav();hvm();
 }
@@ -656,7 +697,7 @@ document.getElementById('pCons').addEventListener('input',mixChg);
 document.getElementById('pSmb').addEventListener('input',mixChg);
 document.getElementById('pCorp').addEventListener('input',mixChg);
 document.querySelectorAll('input[name=ft]').forEach(function(inp){inp.addEventListener('change',function(){if(inp.checked)setInstType(inp.value);});});
-PM_IDS.forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',payMixChg);});
+PM_CT_IDS.concat(PM_DOL_IDS).forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',payMixChg);});
 renderRailList();rprog();rhdr();rnav();mixChg();payMixChg();
 </script>
 </body>
