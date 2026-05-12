@@ -229,6 +229,16 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
   </div>
   <div class="pm-totrow" id="pmTotalRow"></div>
   <p class="sn" style="margin-top:4px">Enter actual monthly figures. Dollar amounts in actual dollars (e.g., 500000 for $500,000). If you enter transaction counts only, dollar volumes are optional. Leave all fields blank to use general industry estimates.</p>
+   <p class="slbl">Annual revenue per customer <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:12px;color:#999999">&mdash; optional</span></p>
+  <div class="note-box">Used to estimate deposit retention value. The default of $150 reflects commonly cited retail banking revenue benchmarks. Adjust to match your institution&rsquo;s actual figure if known.</div>
+  <div class="ai-row" style="margin-bottom:4px">
+    <label for="revPerCust">Estimated annual revenue per customer:</label>
+    <div style="position:relative;display:inline-block">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#999999;pointer-events:none">$</span>
+      <input class="ai-inp" type="number" id="revPerCust" min="0" step="1" value="150" style="padding-left:22px;width:120px">
+    </div>
+  </div>
+  <p class="sn" style="margin-bottom:1.5rem">Typical range: $100&ndash;$500 depending on institution size, product mix, and net interest margin. Sources: BAI Banking Strategies; industry benchmarks from Tower Group, Fiserv, and Forrester Research.</p>
 </div>
 <div class="step" id="step2">
   <div class="rcl" id="railList"></div>
@@ -246,6 +256,7 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
   <p class="cnote">Chart shows estimate range midpoints. All figures represent a &plusmn;10% estimated range &mdash; see breakdown table below.</p>
   <div style="position:relative;height:270px;margin-bottom:1.5rem"><canvas id="roi" role="img" aria-label="Stacked bar chart showing projected annual value by component"></canvas></div>
   <table id="vtbl" class="vtbl"></table>
+  <div id="retPanel"></div>
   <div id="recvFeeFlag"></div>
   <div id="sliderSection"></div>
   <div id="alnPanel"></div>
@@ -643,7 +654,24 @@ function renderSlider(currentT3){
   el.innerHTML=html;
   el.querySelectorAll('.stage-btn').forEach(function(btn){btn.addEventListener('click',function(){selectedSliderStage=parseInt(btn.getAttribute('data-idx'));renderSlider(currentT3);});});
 }
-function renderResults(){
+function renderRetPanel(){
+  var el=document.getElementById('retPanel');if(!el)return;
+  var pct=(S.retLift*100).toFixed(1);
+  el.innerHTML='<div class="slider-section" style="border-top-color:#709945;margin-bottom:1.25rem">'
+    +'<div class="slider-title" style="color:#709945">&#128101; Deposit retention assumption</div>'
+    +'<p class="slider-desc">The model applies a <strong>'+pct+'% annual retention lift</strong> to your estimated customer base. The default of 0.5% is a conservative estimate calibrated against two data points: Federal Reserve Financial Services research (2024) showing that consumers using instant payments report <strong>8% higher satisfaction</strong> with their primary financial institution, and a retail banking baseline churn rate of approximately <strong>15% annually</strong> per BAI Banking Strategies industry data. Adjust below to explore scenarios.</p>'
+    +'<div class="frow" style="margin-bottom:8px"><span class="flbl">Retention lift:</span>'
+    +'<div class="fw"><span class="fp">%</span><input class="fi" type="number" id="retLiftInp" min="0" max="15" step="0.1" value="'+pct+'" style="padding-left:24px"></div>'
+    +'<span class="frange">% annual retention improvement &middot; 0%&ndash;15%</span>'
+    +'</div>'
+    +'<p style="font-size:11px;color:#999999;line-height:1.6">Sources: Federal Reserve Financial Services 2024 Consumer Payments Study &mdash; <em>fedpaymentsimprovement.org</em>; BAI Banking Strategies retail banking benchmark data.</p>'
+    +'</div>';
+  document.getElementById('retLiftInp').addEventListener('input',function(){
+    var v=Math.max(0,Math.min(15,parseFloat(this.value)||0));
+    S.retLift=v/100;renderResults();
+  });
+}
+  function renderResults(){
   var mat=calcMat(),roi=calcROI(),ab=parseFloat(S.assets)||0;
   var matEl=document.getElementById('matB');
   if(mode==='assessment'&&matEl){var mc=MAT[mat-1];matEl.innerHTML='<div class="mbdg"><div class="mey">Current maturity \u00b7 Stage '+mat+' of 5</div><div class="mnm" style="color:'+mc.clr+'">'+mc.nm+'</div><div class="mdc">'+mc.dc+'</div><div class="mtrk">'+MAT.map(function(_,i){return '<div class="mseg" style="'+(i<mat?'background:'+mc.clr:'')+'"></div>';}).join('')+'</div></div>';}else if(matEl)matEl.innerHTML='';
@@ -663,7 +691,9 @@ function renderResults(){
   selectedSliderStage=-1;renderSlider(roi.t3);
   var aligns=getAlignmentHighlights(roi.ucFeeY3),alnEl=document.getElementById('alnPanel');
   if(alnEl)alnEl.innerHTML=aligns.length>0?'<div class="aln-panel"><div class="aln-title">&#128200; What\'s driving your estimate</div>'+aligns.map(function(a){return '<div class="aln-item"><div class="aln-pct">'+a.pct+'%</div><div><strong>'+a.nm+'</strong> accounts for '+a.pct+'% of projected Year 3 fee revenue \u2014 '+a.note+'.</div></div>';}).join('')+'</div>':'';
+  renderRetPanel();
   var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+'</div></div>';}).join('');
+    var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+'</div></div>';}).join('');
   var cust=roi.cust,mt=document.getElementById('mtbl');
   if(mt)mt.innerHTML='<thead><tr><th style="width:22%">Component</th><th style="width:40%">Parameters used in this model</th><th>Source</th></tr></thead><tbody>'
     +'<tr><td>Institution type pre-population</td><td>Commercial Bank: 55% consumer / 35% SMB / 10% corporate &middot; Credit Union: 85% / 14% / 1% &middot; Savings Bank/Thrift: 80% / 18% / 2% &middot; Other: 60% / 30% / 10%. User may override.</td><td>FDIC 2023 deposit account stratification; NCUA peer group data</td></tr>'
@@ -696,6 +726,7 @@ document.getElementById('btnB').addEventListener('click',function(){goBack();});
 document.getElementById('btnN').addEventListener('click',function(){goNext();});
 document.getElementById('btnRs').addEventListener('click',function(){restart();});
 document.getElementById('aIn').addEventListener('input',function(){S.assets=this.value;});
+document.getElementById('revPerCust').addEventListener('input',function(){S.revPerCust=Math.max(0,parseFloat(this.value)||150);});
 document.getElementById('pCons').addEventListener('input',mixChg);
 document.getElementById('pSmb').addEventListener('input',mixChg);
 document.getElementById('pCorp').addEventListener('input',mixChg);
