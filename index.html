@@ -301,6 +301,7 @@ var UCS={};
 function resetUCS(){UC_DATA.forEach(function(u){UCS[u.id]={sel:false,freeInstant:false,freeCard:false,sendFee:null,recvFee:null,pushFee:null,pullFee:null};});}
 resetUCS();
 function isRecvOnly(){return railSel.has('receive')&&!railSel.has('send')&&!railSel.has('card');}
+function checkCostPerItem(){var ab=parseFloat(S.assets)||0;return ab>=5?4:10;}
 function setInstType(t){
   var m=INST_MIX[t]||INST_MIX.other;
   document.getElementById('pCons').value=m.c;document.getElementById('pSmb').value=m.s;document.getElementById('pCorp').value=m.g;
@@ -485,7 +486,8 @@ function calcUCFeeBlended(ucId){
 }
 function calcUCVal(ucId){
   var ab=parseFloat(S.assets)||0,mVol=ab*adjFactor(ucId),bf=calcUCFeeBlended(ucId);
-  return RAMP.map(function(r){var ann=mVol*r*12;return{ann:ann,fv:ann*bf,dv:ann*.10*10};});
+  var cpCheck=checkCostPerItem();
+  return RAMP.map(function(r){var ann=mVol*r*12;return{ann:ann,fv:ann*bf,dv:ann*.10*cpCheck};});
 }
 function calcROI(){
   var ab=parseFloat(S.assets)||0,feeY=[0,0,0],dispYEst=[0,0,0],txY=[0,0,0],ucFeeY3={};
@@ -502,9 +504,10 @@ function calcROI(){
   // payment transaction volume * $10 per displaced item).
   var checkCt=payMix.check?payMix.check.ct:0;
   var dispY;
+  var cpCheck=checkCostPerItem();
   if(checkCt>0){
     var convChecks=checkCt*0.30;
-    dispY=RAMP.map(function(r){return Math.round(convChecks*r*12*10);});
+    dispY=RAMP.map(function(r){return Math.round(convChecks*r*12*cpCheck);});
   } else {
     dispY=dispYEst;
   }
@@ -670,7 +673,7 @@ function renderResults(){
     +'<tr><td>Use-case base volume factors (per $1B assets/month)</td><td>B2B 8,000 &middot; Bill pay 4,000 &middot; P2P 3,500 &middot; Payroll 2,000 &middot; Gig 1,500 &middot; Gaming 1,000 &middot; Insurance 500 &middot; Real estate 150</td><td>Fed Payments Study 2022; AFP Electronic Payments Survey; Nacha ACH volume data</td></tr>'
     +'<tr><td>Adoption ramp</td><td>Year 1: 5% &middot; Year 2: 18% &middot; Year 3: 35% of addressable monthly volume</td><td>Same Day ACH adoption trajectory 2016&ndash;2021 (Nacha); FedNow Service volume growth data, July 2023&ndash;May 2025 (Federal Reserve Financial Services)</td></tr>'
     +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
-    +'<tr><td>Check displacement savings</td><td><strong>If monthly check count was entered:</strong> 30% of monthly check transactions are estimated to be convertible to faster payments within a 3-year horizon. That convertible pool is applied to the adoption ramp (Year 1: 5%, Year 2: 18%, Year 3: 35%), then multiplied by $10.00 per displaced item. <strong>If no check count entered:</strong> 10% of estimated faster payment transaction volume is assumed to displace a check or ACH item, multiplied by $10.00 per item.</td><td>AFP 2024 Payments Fraud and Control Survey; Federal Reserve 2022 Payments Study (check volume decline trends); Nacha check processing cost research ($8&ndash;$12 all-in)</td></tr>'
+    +'<tr><td>Check displacement savings</td><td><strong>If monthly check count was entered:</strong> 30% of monthly check transactions are estimated to be convertible to faster payments within a 3-year horizon. That convertible pool is applied to the adoption ramp (Year 1: 5%, Year 2: 18%, Year 3: 35%), then multiplied by a per-item cost that varies by institution size: $4.00 per displaced item for institutions with assets &ge;$5B (reflecting direct processing costs at scale), and $10.00 per displaced item for institutions with assets below $5B (reflecting higher per-unit branch, equipment, and fraud costs at lower volume). <strong>If no check count entered:</strong> 10% of estimated faster payment transaction volume is assumed to displace a check or ACH item, multiplied by $10.00 per item.</td><td>AFP 2024 Payments Fraud and Control Survey; Federal Reserve 2022 Payments Study (check volume decline trends); Chris Nichols, SouthState Correspondent Division: &ldquo;The Future of Checks&rdquo; (Oct. 2023); &ldquo;9 Steps to Kill Check Processing&rdquo; (July 2024); &ldquo;What Every Check is Costing Your Bank&rdquo; (Oct. 2025). Large community bank direct cost ~$3.68/check (ex-fraud); smaller banks up to $10&ndash;$12 all-in including branch, equipment, and fraud costs.</td></tr>'
     +'<tr><td>Deposit retention value</td><td>Customer estimate: ~'+cust.toLocaleString()+' accounts (assets &times; $14K avg deposit &divide; 70% dep/asset ratio). 0.5% annual retention lift; $200 avg annual revenue per retained customer. Benefit ramps with adoption curve.</td><td>FDIC 2023 average deposit account balance data; FI customer churn and lifetime value benchmarks</td></tr>'
     +'<tr><td>Fraud cost reduction</td><td>10% of faster payment transactions displace items with higher fraud incidence; 0.49% net fraud rate differential; $2,000 average transaction value on displaced items.</td><td>AFP 2024 Payments Fraud and Control Survey; FedNow Service and RTP&reg; network fraud incident data</td></tr>'
     +'<tr><td>Projection range</td><td>All figures shown as a &plusmn;10% range around the model midpoint, reflecting variability in adoption rates, pricing realization, and use case mix.</td><td>FPC model assumption based on variance observed in FI faster payments adoption data</td></tr>'
