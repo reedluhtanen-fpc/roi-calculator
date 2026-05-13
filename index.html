@@ -322,7 +322,7 @@ function setMode(m){
   mode=m;
   document.getElementById('mEst').checked=(m==='estimator');document.getElementById('mAss').checked=(m==='assessment');
   var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');
-  S={step:1,assets:'',cons:60,smb:30,corp:10};railSel.clear();resetUCS();selectedSliderStage=-1;
+  S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   var aIn=document.getElementById('aIn');if(aIn)aIn.value='';
@@ -733,7 +733,7 @@ function applyRetentionChange(){
     +'</tbody>';
 }
 function restart(){
-  S={step:1,assets:'',cons:60,smb:30,corp:10};railSel.clear();resetUCS();selectedSliderStage=-1;
+  S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   document.getElementById('aIn').value='';document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
