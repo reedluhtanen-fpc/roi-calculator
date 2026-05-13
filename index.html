@@ -305,7 +305,7 @@ var PM_UC_MAP={
   realestate:{wire:.3,check:.3},
   gaming:{card:.5}
 };
-var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null;
+var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null,sliderChartInst=null;
 var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
 var UCS={};
@@ -629,7 +629,23 @@ function calcSliderStages(){
   }
   return stages;
 }
-function renderSlider(currentT3){
+function calcStageValueYears(rm,ucIds,fm,feeUcIds){
+  if(!feeUcIds)feeUcIds=ucIds;
+  var feeSet={};feeUcIds.forEach(function(id){feeSet[id]=true;});
+  var ab=parseFloat(S.assets)||0,cust=Math.min(Math.round(ab*70000),50000000);
+  return[0,1,2].map(function(yi){
+    var feeY=0,dispY=0,txY=0;
+    ucIds.forEach(function(ucId){
+      var st=UCS[ucId],bf=0;
+      if(feeSet[ucId]){var effFm=(fm==='carry'&&!st.sel)?'midpoint':fm;bf=getStageBlendedFee(ucId,rm,effFm);}
+      var ann=(ab*adjFactor(ucId))*RAMP[yi]*12;
+      feeY+=ann*bf;dispY+=ann*.10*checkCostPerItem();txY+=ann;
+    });
+    var retY=Math.round(cust*(RAMP[yi]/.35)*S.retLift*S.revPerCust);
+    return Math.round(feeY)+Math.round(dispY)+retY+Math.round(txY*.10*.0049*2000);
+  });
+}
+  function renderSlider(currentT3){
   var el=document.getElementById('sliderSection');if(!el)return;
   if(mode!=='assessment'){el.innerHTML='';return;}
   var stages=calcSliderStages();
@@ -650,9 +666,19 @@ function renderSlider(currentT3){
       +'<span class="'+deltaClass+'">'+deltaStr+' vs. current</span>'
       +'</button>';
   });
-  html+='</div></div>';
+  html+='</div><div id="sliderChartWrap" style="display:none;margin-top:16px;position:relative;height:200px"><canvas id="sliderRoi"></canvas></div></div>';
   el.innerHTML=html;
-  el.querySelectorAll('.stage-btn').forEach(function(btn){btn.addEventListener('click',function(){selectedSliderStage=parseInt(btn.getAttribute('data-idx'));renderSlider(currentT3);});});
+el.querySelectorAll('.stage-btn').forEach(function(btn){btn.addEventListener('click',function(){selectedSliderStage=parseInt(btn.getAttribute('data-idx'));renderSlider(currentT3);});});
+if(sliderChartInst){sliderChartInst.destroy();sliderChartInst=null;}
+if(selectedSliderStage>=0&&selectedSliderStage<stages.length){
+  var wrap=document.getElementById('sliderChartWrap');
+  if(wrap)wrap.style.display='block';
+  var curRoi=calcROI();
+  var st=stages[selectedSliderStage];
+  var scenY=calcStageValueYears(st.rm,st.ucIds,st.fm,st.feeUcIds);
+  var sc=document.getElementById('sliderRoi');
+  if(sc)sliderChartInst=new Chart(sc.getContext('2d'),{type:'line',data:{labels:['Year 1','Year 2','Year 3'],datasets:[{label:'Current trajectory',data:curRoi.totY,borderColor:'#00529B',backgroundColor:'rgba(0,82,155,0.08)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#00529B',tension:.3,fill:true},{label:'Selected scenario',data:scenY,borderColor:'#046a38',backgroundColor:'rgba(4,106,56,0.08)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#046a38',tension:.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11,family:'Inter'},color:'#666666',boxWidth:12}},tooltip:{callbacks:{label:function(ct){return ' '+ct.dataset.label+': '+fmtD(ct.raw);}}}},scales:{x:{grid:{display:false},ticks:{font:{size:12,family:'Inter'},color:'#666666'}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{font:{size:11,family:'Inter'},color:'#666666',callback:function(v){return fmtD(v);}}}}}});
+}
 }
 function renderRetPanel(){
   var el=document.getElementById('retPanel');if(!el)return;
