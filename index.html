@@ -305,7 +305,7 @@ var PM_UC_MAP={
   realestate:{wire:.3,check:.3},
   gaming:{card:.5}
 };
-var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10},railSel=new Set(),chartInst=null;
+var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null;
 var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
 var UCS={};
