@@ -310,7 +310,7 @@ var PM_UC_MAP={
   realestate:{wire:.3,check:.3},
   gaming:{card:.5}
 };
-var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null,sliderChartInst=null;
+var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null,sliderChartInst=null,recAddedUCs=new Set();
 var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
 var UCS={};
@@ -328,6 +328,7 @@ function setMode(m){
   document.getElementById('mEst').checked=(m==='estimator');document.getElementById('mAss').checked=(m==='assessment');
   var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');
   S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
+recAddedUCs.clear();
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   var aIn=document.getElementById('aIn');if(aIn)aIn.value='';
@@ -567,11 +568,15 @@ function calcIncrementalY3(ucId){
 function addUCToModel(ucId){
   var uc=UC_DATA.find(function(u){return u.id===ucId;});
   if(!uc)return;
-  UCS[ucId].sel=true;
+  UCS[ucId].sel=true;recAddedUCs.add(ucId);
   var hasSend=railSel.has('send'),hasCard=railSel.has('card');
   if(hasSend&&!UCS[ucId].freeInstant){UCS[ucId].sendFee=midV(uc.sendLo,uc.sendHi);UCS[ucId].recvFee=midV(uc.recvLo,uc.recvHi);}
   if(hasCard&&!UCS[ucId].freeCard){UCS[ucId].pushFee=midV(uc.pushLo,uc.pushHi);UCS[ucId].pullFee=midV(uc.pullLo,uc.pullHi);}
   renderResults();
+}
+function removeUCFromModel(ucId){
+  UCS[ucId].sel=false;UCS[ucId].sendFee=null;UCS[ucId].recvFee=null;UCS[ucId].pushFee=null;UCS[ucId].pullFee=null;
+  recAddedUCs.delete(ucId);renderResults();
 }
   function getRecs(mat,roi){
   var recs=[],hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecvOnly=isRecvOnly();
@@ -584,10 +589,10 @@ function addUCToModel(ucId){
   if(!hasCard)recs.push({type:'strat',txt:'Card-based money movement is a high-growth capability actively sought by insurance companies, earned wage access providers, gig economy platforms, and marketplace operators. Instant push disbursements and pull transactions via Visa Direct and/or Mastercard Send complement your account-based faster payment capabilities, reaching additional use cases and customer populations.'});
   else if(!hasSend&&!hasRecvOnly)recs.push({type:'strat',txt:'Instant payments on FedNow and/or RTP bring powerful additional capabilities to your faster payments portfolio \u2014 including Request for Payment, B2B treasury payments, and bill pay modernization. RTP supports transactions up to $10M, making same-day bulk commercial settlement viable, while FedNow\'s broad network extends real-time reach to counterparties across the country.'});
   var opps=[],oppLbl=e?'Not in model':'Opportunity';
-  if(!selIds.includes('b2b')&&(s+g)>=25)opps.push({ucId:'b2b',nm:'B2B / Commercial Payments',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('b2b'),note:'B2B payments carry the highest per-transaction values in this model. ISO 20022 rich remittance data support is the key enabler for commercial adoption.'});
-  if(!selIds.includes('p2p')&&c>=50)opps.push({ucId:'p2p',nm:'P2P Transfers',why:c+'% of your customers are consumers',y3:calcIncrementalY3('p2p'),note:'P2P is among the highest-frequency use cases for consumer-focused institutions, with strong customer engagement value and meaningful check displacement savings.'});
-  if(!selIds.includes('payroll')&&(s+g)>=30)opps.push({ucId:'payroll',nm:'Payroll / Earned Wage Access',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('payroll'),note:'EWA platform partnerships drive predictable, recurring origination volume while generating fee income \u2014 a strong fit for business-focused institutions.'});
-  if(!selIds.includes('billpay')&&c>=40)opps.push({ucId:'billpay',nm:'Bill Pay / Request for Payment',why:c+'% of your customers are consumers',y3:calcIncrementalY3('billpay'),note:'RFP is natively available on both FedNow and RTP and is one of the most direct drivers of check displacement savings alongside bill pay fee income.'});
+if((!selIds.includes('b2b')||recAddedUCs.has('b2b'))&&(s+g)>=25)opps.push({ucId:'b2b',...
+if((!selIds.includes('p2p')||recAddedUCs.has('p2p'))&&c>=50)opps.push({ucId:'p2p',...
+if((!selIds.includes('payroll')||recAddedUCs.has('payroll'))&&(s+g)>=30)opps.push({ucId:'payroll',...
+if((!selIds.includes('billpay')||recAddedUCs.has('billpay'))&&c>=40)opps.push({ucId:'billpay',...
   opps.sort(function(a,b){return b.y3-a.y3;}).slice(0,2).forEach(function(o){recs.push({type:'opp',ucId:o.ucId,txt:'<span class="rec-opp-tag">'+oppLbl+'</span><strong>'+o.nm+'</strong> \u2014 based on your customer mix ('+o.why+'), this use case is not yet included in your model. At your institution\'s scale and using typical market fees, adding '+o.nm.toLowerCase()+' could contribute an estimated <strong>'+fmtRange(o.y3)+'</strong> in Year 3 annual value. '+o.note});});
   return recs.slice(0,5);
 }
@@ -756,7 +761,7 @@ function applyRetentionChange(){
   renderRetPanel();
  var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){
   var extra='';
-  if(r.type==='opp')extra='<div style="margin-top:8px"><button class="add-uc-btn" data-ucid="'+r.ucId+'" style="font-size:11px;color:#046a38;background:#FFFFFF;border:1px solid #046a38;border-radius:4px;padding:3px 8px;cursor:pointer;font-family:inherit">&#43; Add to model</button></div>';
+  if(r.type==='opp'){var added=recAddedUCs.has(r.ucId);extra='<div style="margin-top:8px"><button class="toggle-uc-btn" data-ucid="'+r.ucId+'" style="font-size:11px;color:'+(added?'#C0392B':'#046a38')+';background:#FFFFFF;border:1px solid '+(added?'#C0392B':'#046a38')+';border-radius:4px;padding:3px 8px;cursor:pointer;font-family:inherit">'+(added?'&#x2212; Remove from model':'&#43; Add to model')+'</button></div>';}
   if(r.type==='strat')extra='<div style="margin-top:6px;font-size:11px;color:#999999;font-style:italic">'+(mode==='assessment'?'Use the &ldquo;Explore the value of going further&rdquo; section above to model this scenario.':'Use the &larr; Back button to return to Step 2 and model a different capability path.')+'</div>';
   return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+extra+'</div></div>';
 }).join('');
@@ -779,6 +784,7 @@ function applyRetentionChange(){
 }
 function restart(){
   S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
+recAddedUCs.clear();
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   document.getElementById('aIn').value='';document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
@@ -797,7 +803,7 @@ document.getElementById('pCons').addEventListener('input',mixChg);
 document.getElementById('pSmb').addEventListener('input',mixChg);
 document.getElementById('pCorp').addEventListener('input',mixChg);
 document.querySelectorAll('input[name=ft]').forEach(function(inp){inp.addEventListener('change',function(){if(inp.checked)setInstType(inp.value);});});
-document.addEventListener('click',function(e){var btn=e.target.closest('.add-uc-btn');if(btn)addUCToModel(btn.getAttribute('data-ucid'));});
+document.addEventListener('click',function(e){var btn=e.target.closest('.toggle-uc-btn');if(btn){var id=btn.getAttribute('data-ucid');if(recAddedUCs.has(id))removeUCFromModel(id);else addUCToModel(id);}});
   PM_CT_IDS.concat(PM_DOL_IDS).forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',payMixChg);});
 renderRailList();rprog();rhdr();rnav();mixChg();payMixChg();
 </script>
