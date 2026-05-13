@@ -523,7 +523,7 @@ function calcROI(){
     dispY=dispYEst;
   }
   var cust=Math.min(Math.round(ab*70000),50000000);
-  var retY=RAMP.map(function(r){return Math.round(cust*(r/.35)*.005*200);});
+  var retY=RAMP.map(function(r){return Math.round(cust*(r/.35)*S.retLift*S.revPerCust);});
   var fraudY=txY.map(function(tx){return Math.round(tx*.10*.0049*2000);});
   var totY=[0,1,2].map(function(i){return Math.round(feeY[i])+dispY[i]+retY[i]+fraudY[i];});
   return{feeY:feeY.map(Math.round),dispY:dispY.map(Math.round),retY:retY,fraudY:fraudY,totY:totY,t3:totY.reduce(function(a,b){return a+b;},0),cust:cust,ucFeeY3:ucFeeY3};
@@ -602,7 +602,7 @@ function calcStageValue(rm,ucIds,fm,feeUcIds){
     RAMP.forEach(function(r){var ann=mVol*r*12;feeTotal+=ann*bf;dispTotal+=ann*.10*10;txTotal+=ann;});
   });
   var cust=Math.min(Math.round(ab*70000),50000000);
-  var retTotal=RAMP.map(function(r){return Math.round(cust*(r/.35)*.005*200);}).reduce(function(a,b){return a+b;},0);
+  var retTotal=RAMP.map(function(r){return Math.round(cust*(r/.35)*S.retLift*S.revPerCust);}).reduce(function(a,b){return a+b;},0);
   return Math.round(feeTotal)+Math.round(dispTotal)+retTotal+Math.round(txTotal*.10*.0049*2000);
 }
 function calcSliderStages(){
