@@ -659,7 +659,7 @@ function renderRetPanel(){
   var pct=(S.retLift*100).toFixed(1);
   el.innerHTML='<div class="slider-section" style="border-top-color:#709945;margin-bottom:1.25rem">'
     +'<div class="slider-title" style="color:#709945">&#128101; Deposit retention assumption</div>'
-    +'<p class="slider-desc">The model applies a <strong>'+pct+'% annual retention lift</strong> to your estimated customer base. The default of 0.5% is a conservative estimate calibrated against two data points: Federal Reserve Financial Services research (2024) showing that consumers using instant payments report <strong>8% higher satisfaction</strong> with their primary financial institution, and a retail banking baseline churn rate of approximately <strong>15% annually</strong> per BAI Banking Strategies industry data. Adjust below to explore scenarios.</p>'
+    +'<p class="slider-desc" id="retPanelDesc">The model applies a <strong>'+pct+'% annual retention lift</strong> to your estimated customer base. The default of 0.5% is a conservative estimate calibrated against two data points: Federal Reserve Financial Services research (2024) showing that consumers using instant payments report <strong>8% higher satisfaction</strong> with their primary financial institution, and a retail banking baseline churn rate of approximately <strong>15% annually</strong> per BAI Banking Strategies industry data. Adjust below to explore scenarios.</p>'
     +'<div class="frow" style="margin-bottom:8px"><span class="flbl">Retention lift:</span>'
     +'<div class="fw"><span class="fp">%</span><input class="fi" type="number" id="retLiftInp" min="0" max="15" step="0.1" value="'+pct+'" style="padding-left:24px"></div>'
     +'<span class="frange">% annual retention improvement &middot; 0%&ndash;15%</span>'
@@ -668,8 +668,30 @@ function renderRetPanel(){
     +'</div>';
   document.getElementById('retLiftInp').addEventListener('input',function(){
     var v=Math.max(0,Math.min(15,parseFloat(this.value)||0));
-    S.retLift=v/100;renderResults();
+    S.retLift=v/100;
+    applyRetentionChange();
   });
+}
+function applyRetentionChange(){
+  var roi=calcROI();
+  var selCount=isRecvOnly()?UC_DATA.length:Object.values(UCS).filter(function(u){return u.sel;}).length;
+  var mg=document.getElementById('mGrid');
+  if(mg)mg.innerHTML='<div class="met"><div class="ml">3-year projected value</div><div class="mv">'+fmtRange(roi.t3)+'</div><div class="ms">all components</div></div><div class="met"><div class="ml">Year 1 annual value</div><div class="mv">'+fmtRange(roi.totY[0])+'</div><div class="ms">5% adoption ramp</div></div><div class="met"><div class="ml">Year 3 annual value</div><div class="mv">'+fmtRange(roi.totY[2])+'</div><div class="ms">35% adoption ramp</div></div><div class="met"><div class="ml">Use cases modeled</div><div class="mv" style="font-size:20px;font-weight:700">'+selCount+'</div><div class="ms">of '+UC_DATA.length+' available</div></div>';
+  if(chartInst){
+    chartInst.data.datasets[0].data=roi.feeY;
+    chartInst.data.datasets[1].data=roi.dispY;
+    chartInst.data.datasets[2].data=roi.retY;
+    chartInst.data.datasets[3].data=roi.fraudY;
+    chartInst.update();
+  }
+  var rows=[{lbl:'Fee revenue',clr:CLR.fee,data:roi.feeY},{lbl:'Check displacement savings',clr:CLR.disp,data:roi.dispY},{lbl:'Deposit retention value',clr:CLR.ret,data:roi.retY},{lbl:'Fraud cost reduction',clr:CLR.fraud,data:roi.fraudY}];
+  var t3s=rows.map(function(r){return r.data.reduce(function(a,b){return a+b;},0);});
+  var vt=document.getElementById('vtbl');
+  if(vt)vt.innerHTML='<thead><tr><th style="width:36%">Component</th><th style="width:16%">Year 1</th><th style="width:16%">Year 2</th><th style="width:16%">Year 3</th><th style="width:16%">3-Year Total</th></tr></thead><tbody>'+rows.map(function(r,i){return '<tr><td><span class="cdot" style="background:'+r.clr+'"></span>'+r.lbl+'</td>'+r.data.map(function(v){return '<td>'+fmtRange(v)+'</td>';}).join('')+'<td>'+fmtRange(t3s[i])+'</td></tr>';}).join('')+'<tr class="trow"><td>Total projected value</td>'+roi.totY.map(function(v){return '<td>'+fmtRange(v)+'</td>';}).join('')+'<td>'+fmtRange(roi.t3)+'</td></tr></tbody>';
+  var pct=(S.retLift*100).toFixed(1);
+  var desc=document.getElementById('retPanelDesc');
+  if(desc)desc.innerHTML='The model applies a <strong>'+pct+'% annual retention lift</strong> to your estimated customer base. The default of 0.5% is a conservative estimate calibrated against two data points: Federal Reserve Financial Services research (2024) showing that consumers using instant payments report <strong>8% higher satisfaction</strong> with their primary financial institution, and a retail banking baseline churn rate of approximately <strong>15% annually</strong> per BAI Banking Strategies industry data. Adjust below to explore scenarios.';
+  selectedSliderStage=-1;renderSlider(roi.t3);
 }
   function renderResults(){
   var mat=calcMat(),roi=calcROI(),ab=parseFloat(S.assets)||0;
