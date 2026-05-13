@@ -714,8 +714,7 @@ function applyRetentionChange(){
   var aligns=getAlignmentHighlights(roi.ucFeeY3),alnEl=document.getElementById('alnPanel');
   if(alnEl)alnEl.innerHTML=aligns.length>0?'<div class="aln-panel"><div class="aln-title">&#128200; What\'s driving your estimate</div>'+aligns.map(function(a){return '<div class="aln-item"><div class="aln-pct">'+a.pct+'%</div><div><strong>'+a.nm+'</strong> accounts for '+a.pct+'% of projected Year 3 fee revenue \u2014 '+a.note+'.</div></div>';}).join('')+'</div>':'';
   renderRetPanel();
-  var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+'</div></div>';}).join('');
-    var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+'</div></div>';}).join('');
+      var rc=document.getElementById('recs');if(rc)rc.innerHTML=getRecs(mat,roi).map(function(r,i){return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+'</div></div>';}).join('');
   var cust=roi.cust,mt=document.getElementById('mtbl');
   if(mt)mt.innerHTML='<thead><tr><th style="width:22%">Component</th><th style="width:40%">Parameters used in this model</th><th>Source</th></tr></thead><tbody>'
     +'<tr><td>Institution type pre-population</td><td>Commercial Bank: 55% consumer / 35% SMB / 10% corporate &middot; Credit Union: 85% / 14% / 1% &middot; Savings Bank/Thrift: 80% / 18% / 2% &middot; Other: 60% / 30% / 10%. User may override.</td><td>FDIC 2023 deposit account stratification; NCUA peer group data</td></tr>'
