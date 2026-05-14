@@ -219,7 +219,23 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
   </div>
   <div class="tot-row"><span>Total:</span><span id="mixTot" style="font-size:12px;font-weight:600">100%</span><span id="mixWarn" style="font-size:12px;color:#C0392B;display:none">&mdash; must equal 100% to continue</span></div>
   <p class="sn" style="margin-bottom:1.5rem">Selecting an institution type above pre-populates typical values. Adjust to reflect your actual customer mix. Industry benchmarks: community banks ~70/28/2; mid-size ~55/35/10; regional ~45/40/15 (FDIC 2023).</p>
-  <p class="slbl">Payment method mix <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:12px;color:#999999">&mdash; optional</span></p>
+<details id="ucPctDetails" style="border:1px solid #00529B;border-radius:6px;margin-bottom:1.25rem">
+  <summary style="padding:11px 16px;cursor:pointer;font-size:13px;font-weight:600;color:#00529B;list-style:none;display:flex;align-items:center;justify-content:space-between;user-select:none">
+    <span>&#9881;&nbsp; Use case volume mix <span style="font-weight:400;color:#666666;font-size:12px">&mdash; click to view or adjust defaults</span></span>
+    <span style="font-size:11px;color:#999999;font-weight:400">Source: The Clearing House (2025)</span>
+  </summary>
+  <div style="padding:14px 16px;border-top:1px solid #CCCCCC">
+    <div class="note-box" style="margin-bottom:12px">Percentage share of total addressable instant payment transaction volume allocated to each use case. Defaults reflect the distribution of transactions on The Clearing House RTP network, from <em>Current State of Instant Payments</em> (The Clearing House, 2025). Insurance Payouts, Bill Pay/RFP, and Real Estate/Escrow are FPC model assumptions drawn from the TCH &ldquo;Other&rdquo; category. Adjust to reflect your institution&rsquo;s anticipated mix. Values must total 100%.</div>
+    <div id="ucPctGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:8px"></div>
+    <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#666666;margin-bottom:4px">
+      <span>Total:</span>
+      <span id="ucPctTot" style="font-size:12px;font-weight:600">100.0%</span>
+      <span id="ucPctWarn" style="font-size:12px;color:#C0392B;display:none">&mdash; must equal 100% to continue</span>
+      <button type="button" id="ucPctReset" style="margin-left:auto;font-size:11px;color:#666666;background:#FFFFFF;border:1px solid #CCCCCC;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:inherit">&#8635; Reset to defaults</button>
+    </div>
+  </div>
+</details>  
+<p class="slbl">Payment method mix <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:12px;color:#999999">&mdash; optional</span></p>
   <div class="note-box">If you leave this section blank, the model will use general industry data to create estimates. If you fill it in, enter your approximate monthly transaction counts and dollar volumes for each payment type. Your payment method mix is used to identify your highest-priority use cases and sharpen displacement and fraud reduction projections.</div>
   <div class="pm-grid">
     <div class="pm-card"><div class="pm-lbl">Checks</div><div class="pm-field"><span class="pm-flbl">Transactions/mo</span><input class="pm-inp" type="number" id="pmCheckCt" min="0" step="1" placeholder="0"></div><div class="pm-field"><span class="pm-flbl">Monthly volume</span><div class="pm-dfw"><span class="pm-dfp">$</span><input class="pm-dinp" type="number" id="pmCheckDol" min="0" step="1000" placeholder="0"></div></div></div>
@@ -278,14 +294,14 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
 </div>
 <script>
 var UC_DATA=[
-  {id:'p2p',nm:'P2P Transfers',ds:'Consumer person-to-person',base:3500,aff:{c:1.0,s:0.15,g:0.0},sendRange:'$0.25&ndash;$1.50',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.50&ndash;$1.50',pullRange:'$0.25&ndash;$1.00',sendLo:.25,sendHi:1.50,recvLo:0,recvHi:.25,pushLo:.50,pushHi:1.50,pullLo:.25,pullHi:1.00,fsrc:'AFP 2024 Payments Fraud and Control Survey; Nacha industry volume data'},
-  {id:'payroll',nm:'Payroll / Earned Wage Access',ds:'Payroll disbursements & EWA',base:2000,aff:{c:0.5,s:1.0,g:0.6},sendRange:'$0.25&ndash;$1.00',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.25&ndash;$1.00',pullRange:'$0.25&ndash;$0.75',sendLo:.25,sendHi:1.00,recvLo:0,recvHi:.25,pushLo:.25,pushHi:1.00,pullLo:.25,pullHi:.75,fsrc:'Nacha payroll ACH benchmarks; EWA platform industry research'},
-  {id:'insurance',nm:'Insurance Payouts',ds:'Claims & loss settlements',base:500,aff:{c:0.8,s:0.4,g:0.5},sendRange:'$0.50&ndash;$3.00',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.50&ndash;$2.50',pullRange:'$0.25&ndash;$1.50',sendLo:.50,sendHi:3.00,recvLo:0,recvHi:.50,pushLo:.50,pushHi:2.50,pullLo:.25,pullHi:1.50,fsrc:'Insurance industry payment benchmarks; Mercator Advisory Group'},
-  {id:'gig',nm:'Gig Economy Payouts',ds:'Platform & marketplace disbursements',base:1500,aff:{c:0.9,s:0.5,g:0.1},sendRange:'$0.50&ndash;$2.50',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.50&ndash;$2.00',pullRange:'$0.25&ndash;$1.00',sendLo:.50,sendHi:2.50,recvLo:0,recvHi:.50,pushLo:.50,pushHi:2.00,pullLo:.25,pullHi:1.00,fsrc:'Platform economy research; Mercator Advisory Group'},
-  {id:'b2b',nm:'B2B / Commercial Payments',ds:'Supply chain & treasury payments',base:8000,aff:{c:0.0,s:1.0,g:1.0},sendRange:'$1.00&ndash;$5.00',recvRange:'$0.00&ndash;$1.00',pushRange:'$0.75&ndash;$3.00',pullRange:'$0.50&ndash;$2.50',sendLo:1.00,sendHi:5.00,recvLo:0,recvHi:1.00,pushLo:.75,pushHi:3.00,pullLo:.50,pullHi:2.50,fsrc:'AFP Electronic Payments Survey; Nacha commercial ACH data'},
-  {id:'billpay',nm:'Bill Pay / Request for Payment',ds:'RFP & bill pay modernization',base:4000,aff:{c:0.8,s:0.7,g:0.3},sendRange:'$0.25&ndash;$1.50',recvRange:'$0.00&ndash;$0.50',pushRange:'$0.25&ndash;$1.25',pullRange:'$0.25&ndash;$1.00',sendLo:.25,sendHi:1.50,recvLo:0,recvHi:.50,pushLo:.25,pushHi:1.25,pullLo:.25,pullHi:1.00,fsrc:'Federal Reserve 2022 Payments Study; Nacha RFP pilot data'},
-  {id:'realestate',nm:'Real Estate / Escrow Closings',ds:'Title transfers & closing disbursements',base:150,aff:{c:0.6,s:0.5,g:0.3},sendRange:'$5.00&ndash;$30.00',recvRange:'$0.00&ndash;$2.00',pushRange:'$3.00&ndash;$20.00',pullRange:'$2.00&ndash;$15.00',sendLo:5,sendHi:30,recvLo:0,recvHi:2,pushLo:3,pushHi:20,pullLo:2,pullHi:15,fsrc:'ALTA title industry data; industry closing cost benchmarks'},
-  {id:'gaming',nm:'Gaming / Marketplace Payouts',ds:'Winnings & platform payouts',base:1000,aff:{c:1.0,s:0.2,g:0.0},sendRange:'$0.50&ndash;$2.00',recvRange:'$0.00&ndash;$0.25',pushRange:'$0.50&ndash;$2.00',pullRange:'$0.25&ndash;$1.00',sendLo:.50,sendHi:2.00,recvLo:0,recvHi:.25,pushLo:.50,pushHi:2.00,pullLo:.25,pullHi:1.00,fsrc:'Gaming and marketplace platform payment benchmarks'}
+  {id:'p2p',nm:'P2P Transfers',ds:'Consumer person-to-person',base:3500,aff:{c:1.0,s:0.15,g:0.0},sendRange:'$0.00&ndash;$5.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.25&ndash;$1.50',pullRange:'$0.25&ndash;$1.50',sendLo:0,sendHi:5.00,recvLo:0,recvHi:0,pushLo:.25,pushHi:1.50,pullLo:.25,pullHi:1.50,fsrc:'AFP 2024 Payments Fraud and Control Survey; Nacha industry volume data'},
+  {id:'payroll',nm:'Payroll / Earned Wage Access',ds:'Payroll disbursements & EWA',base:2000,aff:{c:0.5,s:1.0,g:0.6},sendRange:'$0.20&ndash;$1.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.20&ndash;$1.00',pullRange:'$0.20&ndash;$1.00',sendLo:.20,sendHi:1.00,recvLo:0,recvHi:0,pushLo:.20,pushHi:1.00,pullLo:.20,pullHi:1.00,fsrc:'Nacha payroll ACH benchmarks; EWA platform industry research'},
+  {id:'insurance',nm:'Insurance Payouts',ds:'Claims & loss settlements',base:500,aff:{c:0.8,s:0.4,g:0.5},sendRange:'$0.50&ndash;$3.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.50&ndash;$2.50',pullRange:'$0.50&ndash;$2.50',sendLo:.50,sendHi:3.00,recvLo:0,recvHi:0,pushLo:.50,pushHi:2.50,pullLo:.50,pullHi:2.50,fsrc:'Insurance industry payment benchmarks; Visa Direct disbursement use case data'},
+  {id:'gig',nm:'Gig Economy Payouts',ds:'Platform & marketplace disbursements',base:1500,aff:{c:0.9,s:0.5,g:0.1},sendRange:'$0.20&ndash;$1.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.20&ndash;$1.00',pullRange:'$0.20&ndash;$1.00',sendLo:.20,sendHi:1.00,recvLo:0,recvHi:0,pushLo:.20,pushHi:1.00,pullLo:.20,pullHi:1.00,fsrc:'Platform economy research; ACH payment benchmarks'},
+  {id:'b2b',nm:'B2B / Commercial Payments',ds:'Supply chain & treasury payments',base:8000,aff:{c:0.0,s:1.0,g:1.0},sendRange:'$0.20&ndash;$1.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.20&ndash;$1.00',pullRange:'$0.20&ndash;$1.00',sendLo:.20,sendHi:1.00,recvLo:0,recvHi:0,pushLo:.20,pushHi:1.00,pullLo:.20,pullHi:1.00,fsrc:'AFP Electronic Payments Survey; Nacha commercial ACH data'},
+  {id:'billpay',nm:'Bill Pay / Request for Payment',ds:'RFP & bill pay modernization',base:4000,aff:{c:0.8,s:0.7,g:0.3},sendRange:'$0.00&ndash;$5.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.25&ndash;$1.50',pullRange:'$0.25&ndash;$1.50',sendLo:0,sendHi:5.00,recvLo:0,recvHi:0,pushLo:.25,pushHi:1.50,pullLo:.25,pullHi:1.50,fsrc:'Federal Reserve 2022 Payments Study; Nacha RFP pilot data'},
+  {id:'realestate',nm:'Real Estate / Escrow Closings',ds:'Title transfers & closing disbursements',base:150,aff:{c:0.6,s:0.5,g:0.3},sendRange:'$15.00&ndash;$30.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$15.00&ndash;$30.00',pullRange:'$15.00&ndash;$30.00',sendLo:15,sendHi:30,recvLo:0,recvHi:0,pushLo:15,pushHi:30,pullLo:15,pullHi:30,fsrc:'ALTA title industry data; domestic wire transfer fee benchmarks'},
+  {id:'gaming',nm:'Gaming / Marketplace Payouts',ds:'Winnings & platform payouts',base:1000,aff:{c:1.0,s:0.2,g:0.0},sendRange:'$0.00&ndash;$5.00',recvRange:'No standard market fee &mdash; default $0.00',pushRange:'$0.25&ndash;$1.50',pullRange:'$0.25&ndash;$1.50',sendLo:0,sendHi:5.00,recvLo:0,recvHi:0,pushLo:.25,pushHi:1.50,pullLo:.25,pullHi:1.50,fsrc:'Gaming and marketplace platform payment benchmarks'}
 ];
 var MAT=[
   {nm:'Explorer',clr:'#888780',dc:"No faster payment rails currently deployed. You're well-positioned to begin \u2014 early adopters are building competitive advantages in customer acquisition, retention, and new fee income streams that compound over time."},
@@ -310,11 +326,13 @@ var PM_UC_MAP={
   realestate:{wire:.3,check:.3},
   gaming:{card:.5}
 };
-var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150},railSel=new Set(),chartInst=null,sliderChartInst=null,recAddedUCs=new Set();
+var TOTAL_BASE=20000;
+var UC_PCT_DEFAULTS={p2p:42,payroll:21,b2b:12,gaming:11,gig:8,billpay:4,insurance:1.5,realestate:0.5};
+var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150,ucPct:Object.assign({},UC_PCT_DEFAULTS)},railSel=new Set(),chartInst=null,sliderChartInst=null,recAddedUCs=new Set();
 var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
 var UCS={};
-function resetUCS(){UC_DATA.forEach(function(u){UCS[u.id]={sel:false,freeInstant:false,freeCard:false,sendFee:null,recvFee:null,pushFee:null,pullFee:null};});}
+function resetUCS(){UC_DATA.forEach(function(u){UCS[u.id]={sel:false,freeInstant:false,freeCard:false,sendFee:null,recvFee:0,pushFee:null,pullFee:null};});}
 resetUCS();
 function isRecvOnly(){return railSel.has('receive')&&!railSel.has('send')&&!railSel.has('card');}
 function checkCostPerItem(){var ab=parseFloat(S.assets)||0;return ab>=5?4:10;}
@@ -327,8 +345,10 @@ function setMode(m){
   mode=m;
   document.getElementById('mEst').checked=(m==='estimator');document.getElementById('mAss').checked=(m==='assessment');
   var cur=document.getElementById('step'+S.step);if(cur)cur.classList.remove('on');
-  S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
+  S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150,ucPct:Object.assign({},UC_PCT_DEFAULTS)};
 recAddedUCs.clear();
+var ucPctDets=document.getElementById('ucPctDetails');if(ucPctDets)ucPctDets.removeAttribute('open');
+renderUcPctGrid();ucPctChg();
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   var aIn=document.getElementById('aIn');if(aIn)aIn.value='';
@@ -402,6 +422,8 @@ function validate(){
   if(S.step===1){
     if(!(parseFloat(S.assets)>0)){svm('Please enter your institution\'s total assets to continue.');return false;}
     if(S.cons+S.smb+S.corp!==100){svm('Customer mix must total 100% to continue.');return false;}
+var ucTot=Math.round(Object.keys(UC_PCT_DEFAULTS).reduce(function(a,k){return a+(S.ucPct&&S.ucPct[k]!=null?parseFloat(S.ucPct[k])||0:UC_PCT_DEFAULTS[k]);},0)*10)/10;
+if(Math.abs(ucTot-100)>=0.5){svm('Use case volume mix must total 100% to continue.');return false;}
   }
   if(S.step===3&&!isRecvOnly()&&!Object.values(UCS).some(function(u){return u.sel;})){svm('Select at least one use case to model.');return false;}
   hvm();return true;
@@ -416,7 +438,32 @@ function switchStep(n){
 function adjFactor(ucId){
   var uc=UC_DATA.find(function(u){return u.id===ucId;}),a=uc.aff,c=S.cons/100,s=S.smb/100,g=S.corp/100;
   var score=c*a.c+s*a.s+g*a.g,neutral=NEUTRAL.c*a.c+NEUTRAL.s*a.s+NEUTRAL.g*a.g;
-  return uc.base*(neutral>0?score/neutral:score);
+  var pct=(S.ucPct&&S.ucPct[ucId]!=null?S.ucPct[ucId]:UC_PCT_DEFAULTS[ucId]||0)/100;
+  return TOTAL_BASE*pct*(neutral>0?score/neutral:score);
+}
+function renderUcPctGrid(){
+  var g=document.getElementById('ucPctGrid');if(!g)return;
+  var html='';
+  UC_DATA.forEach(function(uc){
+    var v=S.ucPct&&S.ucPct[uc.id]!=null?S.ucPct[uc.id]:UC_PCT_DEFAULTS[uc.id]||0;
+    html+='<div class="mix-card"><div class="mix-lbl" style="font-size:11px">'+uc.nm+'</div>'
+      +'<input type="number" id="ucp-'+uc.id+'" min="0" max="100" step="0.1" value="'+v+'" style="width:70px;padding:6px 8px;border:1px solid #CCCCCC;border-radius:6px;font-size:14px;background:#FFFFFF;color:#222222;display:block;margin-bottom:5px;font-family:inherit">'
+      +'<div class="mix-sub">% of volume</div></div>';
+  });
+  g.innerHTML=html;
+  g.querySelectorAll('input[type=number]').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var id=inp.id.replace('ucp-','');
+      S.ucPct[id]=parseFloat(inp.value)||0;
+      ucPctChg();
+    });
+  });
+}
+function ucPctChg(){
+  var tot=Math.round(Object.keys(UC_PCT_DEFAULTS).reduce(function(a,k){return a+(S.ucPct&&S.ucPct[k]!=null?parseFloat(S.ucPct[k])||0:UC_PCT_DEFAULTS[k]);},0)*10)/10;
+  var totEl=document.getElementById('ucPctTot'),warnEl=document.getElementById('ucPctWarn');
+  if(totEl){totEl.textContent=tot.toFixed(1)+'%';totEl.style.color=Math.abs(tot-100)<0.2?'#046a38':'#C0392B';}
+  if(warnEl)warnEl.style.display=Math.abs(tot-100)>=0.2?'inline':'none';
 }
 function calcHighPriorityUCs(n){
   var scores=UC_DATA.map(function(uc){
@@ -461,7 +508,7 @@ function renderUC(){
     });
     return;
   }
-  if(noteEl)noteEl.innerHTML='<div class="note-box">Fee ranges below reflect observed market rates at U.S. financial institutions and are provided for reference only. Sources: FPC member surveys; AFP Electronic Payments Survey; Nacha industry pricing data. FPC does not recommend or endorse any specific pricing. Use <strong>Use midpoint</strong> to populate the market range midpoint as a starting estimate.</div>';
+  if(noteEl)noteEl.innerHTML='<div class="note-box">'Fee ranges below are illustrative and informed by FPC\'s observations of the market and various payments services. FPC does not recommend or endorse any specific pricing.' Use <strong>Use midpoint</strong> to populate the market range midpoint as a starting estimate.</div>';
   if(footEl)footEl.textContent='Select each use case to include and enter your planned fee per transaction. A \u201coffer at no charge\u201d selection models the use case as a strategic capability \u2014 indirect value components are still projected.';
   UC_DATA.forEach(function(uc){
     var st=UCS[uc.id],mv=Math.round(ab*adjFactor(uc.id)),feeHtml='';
@@ -469,6 +516,7 @@ function renderUC(){
       feeHtml+='<div class="fsect"><div class="fsect-lbl">Instant Payments \u2014 FedNow / RTP</div>';
       if(hasSend)feeHtml+=feeInputRow('Send fee','sendFee',uc.sendRange,midStr(uc.sendLo,uc.sendHi),uc.id,st.sendFee,st.freeInstant);
       feeHtml+=feeInputRow('Receive fee','recvFee',uc.recvRange,midStr(uc.recvLo,uc.recvHi),uc.id,st.recvFee,st.freeInstant);
+feeHtml+='<p style="font-size:11px;color:#999999;margin:-4px 0 8px;line-height:1.5">Market participants today do not typically charge a fee for receiving instant payments. The default is $0.00; you may enter a fee if your institution plans to charge one.</p>';
       feeHtml+='<div class="free-row"><input type="checkbox" id="fri-'+uc.id+'" '+(st.freeInstant?'checked':'')+' data-uc="'+uc.id+'" data-freetype="instant"><label for="fri-'+uc.id+'">Offer at no charge \u2014 rely on indirect benefits only</label></div></div>';
     }
     if(hasCard){
@@ -771,20 +819,22 @@ function applyRetentionChange(){
     +'<tr><td>Transaction volume formula</td><td>Asset size ($B) &times; use-case factor &times; customer mix adjustment = estimated monthly addressable transactions (~12&ndash;15% of total noncash, non-card payments realistically convertible to faster payments in a 3-year horizon).</td><td>Federal Reserve 2022 Payments Study; FDIC aggregate deposit and payment data</td></tr>'
     +'<tr><td>Customer mix adjustment</td><td>Each use case has a consumer/SMB/corporate affinity weight. Volume is scaled relative to the neutral benchmark (60/30/10) based on the institution\'s actual mix.</td><td>AFP Electronic Payments Survey segmentation data; FDIC 2023 account stratification benchmarks</td></tr>'
     +'<tr><td>Payment method mix &amp; high-priority use cases</td><td>If entered, use case priority rankings combine customer mix affinity scores with payment method displacement signals: checks &rarr; bill pay, B2B, real estate; wires &rarr; B2B, real estate; ACH credits &rarr; payroll, insurance, gig; ACH debits &rarr; bill pay, P2P; Same-Day ACH credits &rarr; payroll, B2B; Same-Day ACH debits &rarr; bill pay; card &rarr; gig, gaming, insurance. Top 4 by combined score are high-priority in the slider. If blank, ranking uses customer mix affinity alone.</td><td>FPC model assumption; mapping based on displacement research from Nacha, AFP, and Federal Reserve Financial Services</td></tr>'
-    +'<tr><td>Use-case base volume factors (per $1B assets/month)</td><td>B2B 8,000 &middot; Bill pay 4,000 &middot; P2P 3,500 &middot; Payroll 2,000 &middot; Gig 1,500 &middot; Gaming 1,000 &middot; Insurance 500 &middot; Real estate 150</td><td>Fed Payments Study 2022; AFP Electronic Payments Survey; Nacha ACH volume data</td></tr>'
+    +'<tr><td>Use-case volume mix</td><td>Total addressable volume: '+TOTAL_BASE.toLocaleString()+' transactions per $1B assets per month (calibrated against Federal Reserve 2022 Payments Study noncash payment data). Default percentage allocation: P2P 42% &middot; Payroll/EWA 21% &middot; B2B 12% &middot; Gaming 11% &middot; Gig Economy 8% &middot; Bill Pay/RFP 4% &middot; Insurance Payouts 1.5% &middot; Real Estate/Escrow 0.5%. User may override in Step 1.</td><td>The Clearing House, <em>Current State of Instant Payments</em> (2025) for P2P, Payroll/EWA, B2B, Gaming, and Gig Economy categories. Insurance Payouts, Bill Pay/RFP, and Real Estate/Escrow are FPC model assumptions from the TCH &ldquo;Other&rdquo; category (6% combined). Total addressable volume: Federal Reserve 2022 Payments Study.</td></tr>'
     +'<tr><td>Adoption ramp</td><td>Year 1: 5% &middot; Year 2: 18% &middot; Year 3: 35% of addressable monthly volume</td><td>Same Day ACH adoption trajectory 2016&ndash;2021 (Nacha); FedNow Service volume growth data, July 2023&ndash;May 2025 (Federal Reserve Financial Services)</td></tr>'
     +'<tr><td>Fee revenue blending</td><td>When both instant and card rails are selected, volume is split 50/50 between rails. Within instant send/receive: send fee 50%, receive fee 50%. Within card: push fee 70%, pull fee 30%. Receive-only instant: $0 fee.</td><td>FPC model assumption; ratios based on observed disbursement vs. pull transaction mix in card payment networks</td></tr>'
     +'<tr><td>Check displacement savings</td><td><strong>If monthly check count was entered:</strong> 30% of monthly check transactions are estimated to be convertible to faster payments within a 3-year horizon. That convertible pool is applied to the adoption ramp (Year 1: 5%, Year 2: 18%, Year 3: 35%), then multiplied by a per-item cost that varies by institution size: $4.00 per displaced item for institutions with assets &ge;$5B (reflecting direct processing costs at scale), and $10.00 per displaced item for institutions with assets below $5B (reflecting higher per-unit branch, equipment, and fraud costs at lower volume). <strong>If no check count entered:</strong> 10% of estimated faster payment transaction volume is assumed to displace a check or ACH item, multiplied by $10.00 per item.</td><td>AFP 2024 Payments Fraud and Control Survey; Federal Reserve 2022 Payments Study (check volume decline trends); Chris Nichols, SouthState Correspondent Division: &ldquo;The Future of Checks&rdquo; (Oct. 2023); &ldquo;9 Steps to Kill Check Processing&rdquo; (July 2024); &ldquo;What Every Check is Costing Your Bank&rdquo; (Oct. 2025). Large community bank direct cost ~$3.68/check (ex-fraud); smaller banks up to $10&ndash;$12 all-in including branch, equipment, and fraud costs.</td></tr>'
     +'<tr><td>Deposit retention value</td><td>Customer estimate: ~'+cust.toLocaleString()+' accounts (assets &times; $14K avg deposit &divide; 70% dep/asset ratio). 0.5% annual retention lift; $200 avg annual revenue per retained customer. Benefit ramps with adoption curve.</td><td>FDIC 2023 average deposit account balance data; FI customer churn and lifetime value benchmarks</td></tr>'
     +'<tr><td>Fraud cost reduction</td><td>10% of faster payment transactions displace items with higher fraud incidence; 0.49% net fraud rate differential; $2,000 average transaction value on displaced items.</td><td>AFP 2024 Payments Fraud and Control Survey; FedNow Service and RTP&reg; network fraud incident data</td></tr>'
     +'<tr><td>Projection range</td><td>All figures shown as a &plusmn;10% range around the model midpoint, reflecting variability in adoption rates, pricing realization, and use case mix.</td><td>FPC model assumption based on variance observed in FI faster payments adoption data</td></tr>'
-    +'<tr><td>Fee market ranges</td><td>Ranges represent observed U.S. market pricing at FIs for each fee type (send, receive, push, pull). Gross revenue before network operator fees (blended average: $0.04&ndash;$0.50/tx). FPC does not recommend any specific pricing.</td><td>FPC member surveys; AFP Electronic Payments Survey; Nacha industry pricing data; Federal Reserve FedNow pricing disclosures</td></tr>'
+    +'<tr><td>Fee market ranges</td><td>Ranges represent observed U.S. market pricing at FIs for each fee type (send, receive, push, pull). Gross revenue before network operator fees (blended average: $0.04&ndash;$0.50/tx). FPC does not recommend any specific pricing.</td><td>'Fee ranges are illustrative and informed by FPC's observations of the market and various payments services.'</td></tr>'
     +'<tr><td>Receive-side fee assumption</td><td>Where a receive-side fee is charged, the model assumes full market penetration regardless of fee level. Actual adoption may be lower. The results page flags this assumption when applicable.</td><td>FPC model assumption; no published elasticity data exists for instant payment receive-side fees</td></tr>'
     +'</tbody>';
 }
 function restart(){
-  S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150};railSel.clear();resetUCS();selectedSliderStage=-1;
+S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150,ucPct:Object.assign({},UC_PCT_DEFAULTS)};
 recAddedUCs.clear();
+var ucPctDets=document.getElementById('ucPctDetails');if(ucPctDets)ucPctDets.removeAttribute('open');
+renderUcPctGrid();ucPctChg();
   payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};payMixEntered=false;
   document.querySelectorAll('input[type=radio]:not([name=modeR]),input[type=checkbox]').forEach(function(i){i.checked=false;});
   document.getElementById('aIn').value='';document.getElementById('pCons').value=60;document.getElementById('pSmb').value=30;document.getElementById('pCorp').value=10;
@@ -802,10 +852,11 @@ document.getElementById('revPerCust').addEventListener('input',function(){S.revP
 document.getElementById('pCons').addEventListener('input',mixChg);
 document.getElementById('pSmb').addEventListener('input',mixChg);
 document.getElementById('pCorp').addEventListener('input',mixChg);
+document.getElementById('ucPctReset').addEventListener('click',function(){S.ucPct=Object.assign({},UC_PCT_DEFAULTS);renderUcPctGrid();ucPctChg();});
 document.querySelectorAll('input[name=ft]').forEach(function(inp){inp.addEventListener('change',function(){if(inp.checked)setInstType(inp.value);});});
 document.addEventListener('click',function(e){var btn=e.target.closest('.toggle-uc-btn');if(btn){var id=btn.getAttribute('data-ucid');if(recAddedUCs.has(id))removeUCFromModel(id);else addUCToModel(id);}});
   PM_CT_IDS.concat(PM_DOL_IDS).forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',payMixChg);});
-renderRailList();rprog();rhdr();rnav();mixChg();payMixChg();
+renderRailList();rprog();rhdr();rnav();mixChg();payMixChg();renderUcPctGrid();ucPctChg();
 </script>
 </body>
 </html>
