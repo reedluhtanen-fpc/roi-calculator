@@ -177,7 +177,7 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
     <div class="hdr-mark"></div>
     <div>
       <div class="hdr-title">U.S. Faster Payments Council</div>
-      <div class="hdr-sub">Faster Payments ROI Assessment Tool 2.4</div>
+      <div class="hdr-sub">Faster Payments ROI Assessment Tool 2.5</div>
     </div>
   </div>
   <div class="hdr-badge">BETA &mdash; For Reviewer Feedback</div>
@@ -282,7 +282,8 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
   <div id="sliderSection"></div>
   <div id="alnPanel"></div>
   <div class="rp"><div class="rpt">&#128161; Recommendations for your institution</div><div id="recs"></div></div>
-  <details class="mdet"><summary>&#8505;&nbsp; Methodology &amp; data sources</summary><div style="padding:0 16px 12px"><table id="mtbl" class="mtbl"></table></div></details>
+<div id="fpcResourcesPanel"></div>  
+<details class="mdet"><summary>&#8505;&nbsp; Methodology &amp; data sources</summary><div style="padding:0 16px 12px"><table id="mtbl" class="mtbl"></table></div></details>
   <div class="disc">Projections are estimates based on publicly available industry data and the inputs provided. Fee revenue figures represent gross customer-facing revenue and do not deduct network operator fees (industry average approximately $0.04&ndash;$0.50 per transaction). All projected figures represent a &plusmn;10% estimated range around the model midpoint. Where a receive-side fee is charged, the model assumes full market penetration regardless of fee level; actual adoption may vary. This tool is for strategic planning purposes only and does not constitute financial or investment advice. Provided by the U.S. Faster Payments Council.</div>
   <div class="ftr"><span class="ftrc">U.S. Faster Payments Council &middot; fasterpaymentscouncil.org</span><button type="button" id="btnRs" class="btnrs">&#8635; Start over</button></div>
 </div>
@@ -328,6 +329,19 @@ var PM_UC_MAP={
 };
 var TOTAL_BASE=20000;
 var UC_PCT_DEFAULTS={p2p:42,payroll:21,b2b:12,gaming:11,gig:8,billpay:4,insurance:1.5,realestate:0.5};
+var FPC_RESOURCES={
+  useCaseRepo:{t:'FPC Use Case Repository',u:'https://fasterpaymentscouncil.org/use-cases'},
+  billpayRes:{t:'Instant Recurring Payments: Unlocking Opportunities in High-Growth Vertical Markets',u:'https://fasterpaymentscouncil.org/blog/16821/Instant-Recurring-Payments-Unlocking-Opportunities-in-High-Growth-Vertical-Markets-Paper'},
+  b2bMoment:{t:'B2B Instant Payments: The $10 Million Moment',u:'https://fasterpaymentscouncil.org/blog/16676/B2B-Instant-Payments-The-10-Million-Moment-Unlocking-the-Next-Frontier-Blog'},
+  b2bCrossBorder:{t:'B2B Cross-Border Payments: Expert Insights on Faster Payments Adoption',u:'https://fasterpaymentscouncil.org/blog/16332/B2B-Cross-Border-Payments-Expert-Insights-on-Faster-Payments-Adoption-Report'},
+  b2bEInvoicing:{t:'B2B Instant Payments + E-Invoicing: A Perfect Marriage',u:'https://fasterpaymentscouncil.org/blog/16177/B2B-Instant-Payments-E-Invoicing-A-Perfect-Marriage-Blog'},
+  b2bDso:{t:'Getting Paid Faster in B2B: How Instant Payments Help Reduce DSO and Improve Access to Capital',u:'https://fasterpaymentscouncil.org/blog/15839/Getting-Paid-Faster-in-B2B-How-Instant-Payments-Help-Reduce-DSO-and-Improve-Access-to-Capital-Blog'},
+  sendGuideline:{t:'Operational Considerations for Sending Instant Payments Guidelines',u:'https://fasterpaymentscouncil.org/userfiles/2080/files/OCWG_Operational%20Considerations%20for%20Sending%20Instant%20Payments%20Guideline_09-25-2025%20Final.pdf'},
+  receiveGuideline:{t:'Operational Considerations for Receiving Instant Payments Guideline',u:'https://fasterpaymentscouncil.org/userfiles/2080/files/OCWG_Operational%20Considerations%20for%20Receiving%20Instant%20Payments%20Guideline_09-12-2024%20Final(1).pdf'},
+  stateOfPlay:{t:'State of Play in U.S. Faster Payments Report',u:'https://fasterpaymentscouncil.org/userfiles/2080/files/State%20of%20Play_2025_10-14-2025.pdf'},
+  solutionProviders:{t:'FPC Solution Provider Catalogue',u:'https://fasterpaymentscouncil.org/Solution-Providers-Catalogue'},
+  serviceProviders:{t:'FPC Service Provider Catalogue',u:'https://fasterpaymentscouncil.org/Service-Providers-Catalogue'}
+};
 var mode='estimator',S={step:1,assets:'',cons:60,smb:30,corp:10,retLift:0.005,revPerCust:150,ucPct:Object.assign({},UC_PCT_DEFAULTS)},railSel=new Set(),chartInst=null,sliderChartInst=null,recAddedUCs=new Set();
 var payMix={check:{ct:0,dol:0},achDebit:{ct:0,dol:0},achCredit:{ct:0,dol:0},wire:{ct:0,dol:0},sdAchDeb:{ct:0,dol:0},sdAchCr:{ct:0,dol:0},instant:{ct:0,dol:0},card:{ct:0,dol:0},other:{ct:0,dol:0}};
 var payMixEntered=false,selectedSliderStage=-1;
@@ -613,6 +627,11 @@ function calcIncrementalY3(ucId){
   var ab=parseFloat(S.assets)||0,mVol=ab*adjFactor(ucId),fee=repFee(ucId),ann=mVol*RAMP[2]*12;
   return Math.round(ann*fee+ann*.10*10+ann*.10*.0049*2000);
 }
+function fpcLink(key){var r=FPC_RESOURCES[key];return r?'<a href="'+r.u+'" target="_blank" style="color:#00529B">'+r.t+'</a>':'';}
+function fpcLinksBlock(keys){
+  if(!keys||!keys.length)return'';
+  return'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #d0e4f5;font-size:11px;color:#555555"><strong style="color:#00529B">&#128279; FPC Resources:</strong> '+keys.map(fpcLink).join(' &nbsp;&middot;&nbsp; ')+'</div>';
+}
 function addUCToModel(ucId){
   var uc=UC_DATA.find(function(u){return u.id===ucId;});
   if(!uc)return;
@@ -630,18 +649,18 @@ function removeUCFromModel(ucId){
   var recs=[],hasSend=railSel.has('send'),hasCard=railSel.has('card'),hasRecvOnly=isRecvOnly();
   var selIds=isRecvOnly()?UC_DATA.map(function(u){return u.id;}):Object.entries(UCS).filter(function(e){return e[1].sel;}).map(function(e){return e[0];});
   var c=S.cons,s=S.smb,g=S.corp,e=mode==='estimator';
-  if(mat===1)recs.push({type:'strat',txt:'Receive-only instant payments is an efficient, low-lift entry point \u2014 most core processors can enable it within 30\u201360 days. '+(e?'This scenario baseline shows the opportunity value of adding faster payments capabilities.':'Your institution would immediately enable real-time incoming credits for all customers.')+' Indirect value from check displacement savings, deposit retention, and fraud cost reduction begins accruing from day one, with estimated Year 1 value of <strong>'+fmtRange(roi.totY[0])+'</strong>.'});
-  else if(mat===2)recs.push({type:'strat',txt:(e?'This scenario models receive-only capability. ':'')+'Activating send capability is the natural next step \u2014 it unlocks direct fee income on top of the indirect value already captured. A send-enabled strategy could generate estimated Year 3 total annual value of <strong>'+fmtRange(roi.totY[2])+'</strong>.'});
-  else if(mat===3)recs.push({type:'strat',txt:(e?'This scenario models a single rail capability. ':'')+'Adding a complementary faster payments rail broadens your reach across customer segments and use cases. '+(hasSend?'Card-based money movement is the preferred delivery mechanism for insurance companies, earned wage access providers, and gig economy platforms \u2014 a natural complement to your instant payment capabilities.':'Activating send on FedNow and/or RTP brings powerful additional capabilities including Request for Payment, B2B treasury payments, and bill pay modernization.')});
+  if(mat===1)recs.push({type:'strat',txt:'Receive-only instant payments is an efficient, low-lift entry point \u2014 most core processors can enable it within 30\u201360 days. '+(e?'This scenario baseline shows the opportunity value of adding faster payments capabilities.':'Your institution would immediately enable real-time incoming credits for all customers.')+' Indirect value from check displacement savings, deposit retention, and fraud cost reduction begins accruing from day one, with estimated Year 1 value of <strong>'+fmtRange(roi.totY[0])+'</strong>.',links:['receiveGuideline','stateOfPlay']});
+  else if(mat===2)recs.push({type:'strat',txt:(e?'This scenario models receive-only capability. ':'')+'Activating send capability is the natural next step \u2014 it unlocks direct fee income on top of the indirect value already captured. A send-enabled strategy could generate estimated Year 3 total annual value of <strong>'+fmtRange(roi.totY[2])+'</strong>.',links:['receiveGuideline','stateOfPlay']});
+  else if(mat===3)recs.push({type:'strat',txt:(e?'This scenario models a single rail capability. ':'')+'Adding a complementary faster payments rail broadens your reach across customer segments and use cases. '+(hasSend?'Card-based money movement is the preferred delivery mechanism for insurance companies, earned wage access providers, and gig economy platforms \u2014 a natural complement to your instant payment capabilities.':'Activating send on FedNow and/or RTP brings powerful additional capabilities including Request for Payment, B2B treasury payments, and bill pay modernization.'),links:['stateOfPlay']});
   else recs.push({type:'strat',txt:(e?'This scenario models a multi-rail strategy. ':'')+'The next layer of value comes from deepening specific volume relationships with commercial clients, insurance carriers, or gig economy platforms. At a Year 3 projection of <strong>'+fmtRange(roi.totY[2])+'</strong>, a 20% uplift in adoption rate would add an estimated <strong>'+fmtRange(Math.round(roi.totY[2]*.20))+'</strong> in annual value.'});
-  if(!hasCard)recs.push({type:'strat',txt:'Card-based money movement is a high-growth capability actively sought by insurance companies, earned wage access providers, gig economy platforms, and marketplace operators. Instant push disbursements and pull transactions via Visa Direct and/or Mastercard Send complement your account-based faster payment capabilities, reaching additional use cases and customer populations.'});
-  else if(!hasSend&&!hasRecvOnly)recs.push({type:'strat',txt:'Instant payments on FedNow and/or RTP bring powerful additional capabilities to your faster payments portfolio \u2014 including Request for Payment, B2B treasury payments, and bill pay modernization. RTP supports transactions up to $10M, making same-day bulk commercial settlement viable, while FedNow\'s broad network extends real-time reach to counterparties across the country.'});
+  if(!hasCard)recs.push({type:'strat',txt:'Card-based money movement is a high-growth capability actively sought by insurance companies, earned wage access providers, gig economy platforms, and marketplace operators. Instant push disbursements and pull transactions via Visa Direct and/or Mastercard Send complement your account-based faster payment capabilities, reaching additional use cases and customer populations.',links:['stateOfPlay']});
+  else if(!hasSend&&!hasRecvOnly)recs.push({type:'strat',txt:'Instant payments on FedNow and/or RTP bring powerful additional capabilities to your faster payments portfolio \u2014 including Request for Payment, B2B treasury payments, and bill pay modernization. RTP supports transactions up to $10M, making same-day bulk commercial settlement viable, while FedNow\'s broad network extends real-time reach to counterparties across the country.',links:['stateOfPlay']});
   var opps=[],oppLbl=e?'Not in model':'Opportunity';
-if((!selIds.includes('b2b')||recAddedUCs.has('b2b'))&&(s+g)>=25)opps.push({ucId:'b2b',nm:'B2B / Commercial Payments',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('b2b'),note:'B2B payments carry the highest per-transaction values in this model. ISO 20022 rich remittance data support is the key enabler for commercial adoption.'});
-if((!selIds.includes('p2p')||recAddedUCs.has('p2p'))&&c>=50)opps.push({ucId:'p2p',nm:'P2P Transfers',why:c+'% of your customers are consumers',y3:calcIncrementalY3('p2p'),note:'P2P is among the highest-frequency use cases for consumer-focused institutions, with strong customer engagement value and meaningful check displacement savings.'});
-if((!selIds.includes('payroll')||recAddedUCs.has('payroll'))&&(s+g)>=30)opps.push({ucId:'payroll',nm:'Payroll / Earned Wage Access',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('payroll'),note:'EWA platform partnerships drive predictable, recurring origination volume while generating fee income \u2014 a strong fit for business-focused institutions.'});
-if((!selIds.includes('billpay')||recAddedUCs.has('billpay'))&&c>=40)opps.push({ucId:'billpay',nm:'Bill Pay / Request for Payment',why:c+'% of your customers are consumers',y3:calcIncrementalY3('billpay'),note:'RFP is natively available on both FedNow and RTP and is one of the most direct drivers of check displacement savings alongside bill pay fee income.'});
-  opps.sort(function(a,b){return b.y3-a.y3;}).slice(0,2).forEach(function(o){recs.push({type:'opp',ucId:o.ucId,txt:'<span class="rec-opp-tag">'+oppLbl+'</span><strong>'+o.nm+'</strong> \u2014 based on your customer mix ('+o.why+'), this use case is not yet included in your model. At your institution\'s scale and using typical market fees, adding '+o.nm.toLowerCase()+' could contribute an estimated <strong>'+fmtRange(o.y3)+'</strong> in Year 3 annual value. '+o.note});});
+if((!selIds.includes('b2b')||recAddedUCs.has('b2b'))&&(s+g)>=25)opps.push({ucId:'b2b',nm:'B2B / Commercial Payments',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('b2b'),note:'B2B payments carry the highest per-transaction values in this model. ISO 20022 rich remittance data support is the key enabler for commercial adoption.',links:['useCaseRepo','b2bMoment','b2bCrossBorder','b2bEInvoicing','b2bDso']});
+if((!selIds.includes('p2p')||recAddedUCs.has('p2p'))&&c>=50)opps.push({ucId:'p2p',nm:'P2P Transfers',why:c+'% of your customers are consumers',y3:calcIncrementalY3('p2p'),note:'P2P is among the highest-frequency use cases for consumer-focused institutions, with strong customer engagement value and meaningful check displacement savings.',links:['useCaseRepo']});
+if((!selIds.includes('payroll')||recAddedUCs.has('payroll'))&&(s+g)>=30)opps.push({ucId:'payroll',nm:'Payroll / Earned Wage Access',why:(s+g)+'% of your customers are businesses',y3:calcIncrementalY3('payroll'),note:'EWA platform partnerships drive predictable, recurring origination volume while generating fee income \u2014 a strong fit for business-focused institutions.',links:['useCaseRepo']});
+if((!selIds.includes('billpay')||recAddedUCs.has('billpay'))&&c>=40)opps.push({ucId:'billpay',nm:'Bill Pay / Request for Payment',why:c+'% of your customers are consumers',y3:calcIncrementalY3('billpay'),note:'RFP is natively available on both FedNow and RTP and is one of the most direct drivers of check displacement savings alongside bill pay fee income.',links:['useCaseRepo','billpayRes']});
+  opps.sort(function(a,b){return b.y3-a.y3;}).slice(0,2).forEach(function(o){recs.push({type:'opp',ucId:o.ucId,txt:'<span class="rec-opp-tag">'+oppLbl+'</span><strong>'+o.nm+'</strong> \u2014 based on your customer mix ('+o.why+'), this use case is not yet included in your model. At your institution\'s scale and using typical market fees, adding '+o.nm.toLowerCase()+' could contribute an estimated <strong>'+fmtRange(o.y3)+'</strong> in Year 3 annual value. '+o.note,links:o.links||['useCaseRepo']});});
   return recs.slice(0,5);
 }
 function getStageBlendedFee(ucId,rm,fm){
@@ -811,9 +830,15 @@ function applyRetentionChange(){
   var extra='';
   if(r.type==='opp'){var added=recAddedUCs.has(r.ucId);extra='<div style="margin-top:8px"><button class="toggle-uc-btn" data-ucid="'+r.ucId+'" style="font-size:11px;color:'+(added?'#C0392B':'#046a38')+';background:#FFFFFF;border:1px solid '+(added?'#C0392B':'#046a38')+';border-radius:4px;padding:3px 8px;cursor:pointer;font-family:inherit">'+(added?'&#x2212; Remove from model':'&#43; Add to model')+'</button></div>';}
   if(r.type==='strat')extra='<div style="margin-top:6px;font-size:11px;color:#999999;font-style:italic">'+(mode==='assessment'?'Use the &ldquo;Explore the value of going further&rdquo; section above to model this scenario.':'Use the &larr; Back button to return to Step 2 and model a different capability path.')+'</div>';
-  return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+extra+'</div></div>';
+  return '<div class="rec"><div class="recn '+r.type+'">'+(i+1)+'</div><div>'+r.txt+extra+(r.links&&r.links.length?fpcLinksBlock(r.links):'')+'</div></div>';
 }).join('');
-  var cust=roi.cust,mt=document.getElementById('mtbl');
+var rpDiv=document.getElementById('fpcResourcesPanel');
+if(rpDiv)rpDiv.innerHTML='<div class="rp"><div class="rpt">&#128279; FPC Resources</div>'
+  +'<div style="display:flex;flex-direction:column;gap:10px">'
+  +'<div style="font-size:13px;color:#666666;line-height:1.65">&#x2022; Looking for a partner to help you implement faster payments? Explore the '+fpcLink('solutionProviders')+' for technology providers and solutions.</div>'
+  +'<div style="font-size:13px;color:#666666;line-height:1.65">&#x2022; Need advice from FPC\'s expert members? Find trusted advisors in the '+fpcLink('serviceProviders')+'.</div>'
+  +'</div></div>';  
+var cust=roi.cust,mt=document.getElementById('mtbl');
   if(mt)mt.innerHTML='<thead><tr><th style="width:22%">Component</th><th style="width:40%">Parameters used in this model</th><th>Source</th></tr></thead><tbody>'
     +'<tr><td>Institution type pre-population</td><td>Commercial Bank: 55% consumer / 35% SMB / 10% corporate &middot; Credit Union: 85% / 14% / 1% &middot; Savings Bank/Thrift: 80% / 18% / 2% &middot; Other: 60% / 30% / 10%. User may override.</td><td>FDIC 2023 deposit account stratification; NCUA peer group data</td></tr>'
     +'<tr><td>Transaction volume formula</td><td>Asset size ($B) &times; use-case factor &times; customer mix adjustment = estimated monthly addressable transactions (~12&ndash;15% of total noncash, non-card payments realistically convertible to faster payments in a 3-year horizon).</td><td>Federal Reserve 2022 Payments Study; FDIC aggregate deposit and payment data</td></tr>'
