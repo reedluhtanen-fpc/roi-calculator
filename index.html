@@ -177,7 +177,7 @@ p.ss{margin:0 0 1.5rem;font-size:14px;color:#666666;line-height:1.65}
     <div class="hdr-mark"></div>
     <div>
       <div class="hdr-title">U.S. Faster Payments Council</div>
-      <div class="hdr-sub">Faster Payments ROI Assessment Tool 2.3</div>
+      <div class="hdr-sub">Faster Payments ROI Assessment Tool 2.4</div>
     </div>
   </div>
   <div class="hdr-badge">BETA &mdash; For Reviewer Feedback</div>
@@ -508,7 +508,7 @@ function renderUC(){
     });
     return;
   }
-  if(noteEl)noteEl.innerHTML='<div class="note-box">Fee ranges below are illustrative and informed by FPC's observations of the market and various payments services. FPC does not recommend or endorse any specific pricing. Use <strong>Use midpoint</strong> to populate the market range midpoint as a starting estimate.</div>';
+  if(noteEl)noteEl.innerHTML='<div class="note-box">Fee ranges below are illustrative and informed by FPC observations of the market and various payments services. FPC does not recommend or endorse any specific pricing. Use <strong>Use midpoint</strong> to populate the market range midpoint as a starting estimate.</div>';
   if(footEl)footEl.textContent='Select each use case to include and enter your planned fee per transaction. A \u201coffer at no charge\u201d selection models the use case as a strategic capability \u2014 indirect value components are still projected.';
   UC_DATA.forEach(function(uc){
     var st=UCS[uc.id],mv=Math.round(ab*adjFactor(uc.id)),feeHtml='';
